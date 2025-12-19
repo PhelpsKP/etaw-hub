@@ -20,7 +20,7 @@ export function Book() {
   useEffect(() => {
     if (user && user.role !== 'client') {
       if (user.role === 'admin') {
-        navigate('/admin', { replace: true });
+        navigate('/app/admin', { replace: true });
       } else {
         navigate('/app', { replace: true });
       }

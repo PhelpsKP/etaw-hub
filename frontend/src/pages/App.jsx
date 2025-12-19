@@ -48,25 +48,125 @@ export function App() {
 
       <div style={{ marginTop: '2rem' }}>
         {user?.role === 'client' && (
-          <button
-            onClick={() => navigate('/book')}
-            style={{
-              padding: '0.75rem 1.5rem',
-              backgroundColor: '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '1rem',
-              fontWeight: 'bold'
-            }}
-          >
-            Book a Session
-          </button>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: 'var(--space-lg)',
+            maxWidth: '800px'
+          }}>
+            <button
+              onClick={() => navigate('/app/book')}
+              style={{
+                padding: 'var(--space-lg)',
+                backgroundColor: 'var(--color-primary)',
+                color: 'white',
+                border: 'none',
+                borderRadius: 'var(--radius)',
+                cursor: 'pointer',
+                fontSize: 'var(--font-size-lg)',
+                fontWeight: 600,
+                transition: 'transform 0.2s'
+              }}
+              onMouseEnter={(e) => e.target.style.transform = 'scale(1.02)'}
+              onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+            >
+              📅 Book Sessions
+            </button>
+            <button
+              onClick={() => navigate('/app/workouts')}
+              style={{
+                padding: 'var(--space-lg)',
+                backgroundColor: 'var(--color-accent)',
+                color: 'var(--color-text)',
+                border: 'none',
+                borderRadius: 'var(--radius)',
+                cursor: 'pointer',
+                fontSize: 'var(--font-size-lg)',
+                fontWeight: 600,
+                transition: 'transform 0.2s'
+              }}
+              onMouseEnter={(e) => e.target.style.transform = 'scale(1.02)'}
+              onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+            >
+              💪 My Workouts
+            </button>
+            <button
+              onClick={() => navigate('/app/credits')}
+              style={{
+                padding: 'var(--space-lg)',
+                backgroundColor: 'var(--color-accent)',
+                color: 'var(--color-text)',
+                border: 'none',
+                borderRadius: 'var(--radius)',
+                cursor: 'pointer',
+                fontSize: 'var(--font-size-lg)',
+                fontWeight: 600,
+                transition: 'transform 0.2s'
+              }}
+              onMouseEnter={(e) => e.target.style.transform = 'scale(1.02)'}
+              onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+            >
+              🎫 My Credits
+            </button>
+            <button
+              onClick={() => navigate('/app/rewards')}
+              style={{
+                padding: 'var(--space-lg)',
+                backgroundColor: 'var(--color-accent)',
+                color: 'var(--color-text)',
+                border: 'none',
+                borderRadius: 'var(--radius)',
+                cursor: 'pointer',
+                fontSize: 'var(--font-size-lg)',
+                fontWeight: 600,
+                transition: 'transform 0.2s'
+              }}
+              onMouseEnter={(e) => e.target.style.transform = 'scale(1.02)'}
+              onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+            >
+              ⭐ Rewards
+            </button>
+            <button
+              onClick={() => navigate('/app/membership')}
+              style={{
+                padding: 'var(--space-lg)',
+                backgroundColor: 'var(--color-accent)',
+                color: 'var(--color-text)',
+                border: 'none',
+                borderRadius: 'var(--radius)',
+                cursor: 'pointer',
+                fontSize: 'var(--font-size-lg)',
+                fontWeight: 600,
+                transition: 'transform 0.2s'
+              }}
+              onMouseEnter={(e) => e.target.style.transform = 'scale(1.02)'}
+              onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+            >
+              🎟️ Membership
+            </button>
+            <button
+              onClick={() => navigate('/app/intake')}
+              style={{
+                padding: 'var(--space-lg)',
+                backgroundColor: 'var(--color-accent)',
+                color: 'var(--color-text)',
+                border: 'none',
+                borderRadius: 'var(--radius)',
+                cursor: 'pointer',
+                fontSize: 'var(--font-size-lg)',
+                fontWeight: 600,
+                transition: 'transform 0.2s'
+              }}
+              onMouseEnter={(e) => e.target.style.transform = 'scale(1.02)'}
+              onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+            >
+              📋 Intake Forms
+            </button>
+          </div>
         )}
         {user?.role === 'admin' && (
           <button
-            onClick={() => navigate('/admin')}
+            onClick={() => navigate('/app/admin')}
             style={{
               padding: '0.75rem 1.5rem',
               backgroundColor: '#28a745',
