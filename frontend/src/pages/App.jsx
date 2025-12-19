@@ -45,6 +45,43 @@ export function App() {
       <div style={{ marginTop: '2rem' }}>
         <p>You're successfully logged in and viewing a protected route.</p>
       </div>
+
+      <div style={{ marginTop: '2rem' }}>
+        {user?.role === 'client' && (
+          <button
+            onClick={() => navigate('/book')}
+            style={{
+              padding: '0.75rem 1.5rem',
+              backgroundColor: '#007bff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '1rem',
+              fontWeight: 'bold'
+            }}
+          >
+            Book a Session
+          </button>
+        )}
+        {user?.role === 'admin' && (
+          <button
+            onClick={() => navigate('/admin')}
+            style={{
+              padding: '0.75rem 1.5rem',
+              backgroundColor: '#28a745',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '1rem',
+              fontWeight: 'bold'
+            }}
+          >
+            Admin Panel
+          </button>
+        )}
+      </div>
     </div>
   );
 }

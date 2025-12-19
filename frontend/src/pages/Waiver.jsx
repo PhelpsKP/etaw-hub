@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const API = "http://127.0.0.1:8787";
+import { API_BASE_URL } from "../lib/api";
 
 export function Waiver() {
   const navigate = useNavigate();
@@ -25,7 +24,7 @@ export function Waiver() {
       return;
     }
 
-    const res = await fetch(`${API}/api/waiver/status`, {
+    const res = await fetch(`${API_BASE_URL}/api/waiver/status`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -53,7 +52,7 @@ export function Waiver() {
     const token = localStorage.getItem("token");
     if (!token) return navigate("/login", { replace: true });
 
-    const res = await fetch(`${API}/api/waiver/sign`, {
+    const res = await fetch(`${API_BASE_URL}/api/waiver/sign`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

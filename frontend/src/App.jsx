@@ -6,6 +6,7 @@ import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
 import { App as AppPage } from './pages/App';
 import { Admin } from './pages/Admin';
+import { Book } from './pages/Book';
 import { Waiver } from "./pages/Waiver";
 import { WaiverGate } from "./components/WaiverGate";
 
@@ -24,6 +25,17 @@ function App() {
               <WaiverGate>
                 <ProtectedRoute>
                   <AppPage />
+                </ProtectedRoute>
+              </WaiverGate>
+            }
+          />
+
+          <Route
+            path="/book"
+            element={
+              <WaiverGate>
+                <ProtectedRoute>
+                  <Book />
                 </ProtectedRoute>
               </WaiverGate>
             }

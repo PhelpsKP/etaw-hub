@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { apiRequest, API_BASE_URL } from '../lib/api';
 
 const AuthContext = createContext(null);
 
@@ -13,18 +14,14 @@ export function AuthProvider({ children }) {
 
   async function checkAuth() {
     const token = localStorage.getItem('token');
-    
+
     if (!token) {
       setLoading(false);
       return;
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:8787/api/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await apiRequest('/api/me');
 
       if (response.ok) {
         const userData = await response.json();
@@ -44,7 +41,7 @@ export function AuthProvider({ children }) {
   }
 
   async function login(email, password) {
-    const response = await fetch('http://127.0.0.1:8787/auth/login', {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
@@ -57,13 +54,13 @@ export function AuthProvider({ children }) {
 
     const { token } = await response.json();
     localStorage.setItem('token', token);
-    
+
     // Fetch user info
     await checkAuth();
   }
 
   async function signup(email, password) {
-    const response = await fetch('http://127.0.0.1:8787/auth/signup', {
+    const response = await fetch(`${API_BASE_URL}/auth/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })

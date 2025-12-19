@@ -17,7 +17,29 @@
       "database_name": "etaw_hub_db",
       "database_id": "69739147-aed0-467d-9774-e3739413b29b"
     }
-  ]
+  ],
+
+  /**
+   * Email configuration for MailChannels
+   * Note: MAILCHANNELS_API_KEY must be set as a secret (not in vars)
+   * Local: wrangler secret put MAILCHANNELS_API_KEY
+   * Production: wrangler secret put MAILCHANNELS_API_KEY --env production
+   */
+  "vars": {
+    "EMAIL_FROM": "noreply@etaw.com",
+    "EMAIL_FROM_NAME": "Elite Training and Wellness",
+    "REMINDERS_DRY_RUN": "true"
+    // "ALLOWED_ORIGINS": "https://your-app.pages.dev,https://custom-domain.com"
+  },
+
+  /**
+   * Cron Triggers
+   * Email reminder cron runs every 5 minutes for dev/testing
+   * Production: adjust schedule as needed
+   */
+  "triggers": {
+    "crons": ["*/5 * * * *"]
+  }
 
   /**
    * Smart Placement

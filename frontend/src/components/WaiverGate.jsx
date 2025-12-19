@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-
-const API = "http://127.0.0.1:8787";
+import { API_BASE_URL } from "../lib/api";
 
 export function WaiverGate({ children }) {
   const [loading, setLoading] = useState(true);
@@ -16,7 +15,7 @@ export function WaiverGate({ children }) {
         return;
       }
 
-      const res = await fetch(`${API}/api/waiver/status`, {
+      const res = await fetch(`${API_BASE_URL}/api/waiver/status`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
