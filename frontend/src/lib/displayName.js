@@ -1,6 +1,6 @@
 /**
  * Get display name for user greetings with fallback logic
- * @param {Object} user - User object with optional first_name and email
+ * @param {Object} user - User object with optional first_name, email, and role
  * @returns {string} Capitalized display name
  */
 export function getDisplayName(user) {
@@ -17,7 +17,12 @@ export function getDisplayName(user) {
     return capitalize(emailPrefix);
   }
 
-  // 3rd preference: generic fallback
+  // 3rd preference: role label
+  if (user.role) {
+    return capitalize(user.role);
+  }
+
+  // Final fallback
   return 'there';
 }
 
