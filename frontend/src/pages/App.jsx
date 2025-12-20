@@ -1,5 +1,6 @@
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { getDisplayName } from '../lib/displayName';
 
 export function App() {
   const { user, logout } = useAuth();
@@ -37,7 +38,7 @@ export function App() {
       </header>
 
       <div>
-        <h2>Welcome, {user?.email}!</h2>
+        <h2>Welcome, {getDisplayName(user)}!</h2>
         <p>Role: {user?.role}</p>
         <p>User ID: {user?.id}</p>
       </div>

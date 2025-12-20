@@ -24,24 +24,32 @@ function json(data: unknown, status = 200, extraHeaders: Record<string, string> 
   });
 }
 
-// Vite dev server origin. Adjust if you change ports.
-const DEV_ORIGIN = "http://localhost:5173";
+// Helper: check if origin is allowed
+function isAllowedOrigin(origin: string | null): boolean {
+  if (!origin) return false;
 
-function corsHeaders(origin: string | null, env: Env) {
-  // Allow origins: DEV_ORIGIN (local dev) + ALLOWED_ORIGINS env variable (production)
-  const allowedOrigins = [DEV_ORIGIN];
-
-  // Add production origins from environment variable (comma-separated)
-  if (env.ALLOWED_ORIGINS) {
-    allowedOrigins.push(...env.ALLOWED_ORIGINS.split(',').map(o => o.trim()));
+  // Allow local development
+  if (origin === "http://localhost:5173" || origin === "http://127.0.0.1:5173") {
+    return true;
   }
 
-  // Check if the request origin is allowed
-  const allowOrigin = origin && allowedOrigins.includes(origin) ? origin : DEV_ORIGIN;
+  // Allow Cloudflare Pages (both production and preview URLs)
+  // Production: https://etaw-hub.pages.dev
+  // Preview: https://etaw-hub-xxx.pages.dev or https://xxx.etaw-hub.pages.dev
+  if (origin.match(/^https:\/\/.*\.pages\.dev$/)) {
+    return true;
+  }
+
+  return false;
+}
+
+// Helper: generate CORS headers for allowed origins
+function corsHeaders(origin: string | null) {
+  const allowedOrigin = isAllowedOrigin(origin) ? origin : "http://localhost:5173";
 
   return {
-    "Access-Control-Allow-Origin": allowOrigin,
-    "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS",
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
     "Access-Control-Allow-Credentials": "true",
   };
@@ -376,14 +384,15 @@ async function sendEmail(
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
+    const origin = request.headers.get("Origin");
 
     // ----- CORS preflight -----
     if (request.method === "OPTIONS") {
-      return new Response(null, { status: 204, headers: corsHeaders(request.headers.get("Origin"), env) });
+      return new Response(null, { status: 204, headers: corsHeaders(origin) });
     }
 
     const withCors = (res: Response) => {
-      const headers = corsHeaders(request.headers.get("Origin"), env);
+      const headers = corsHeaders(origin);
       Object.entries(headers).forEach(([k, v]) => res.headers.set(k, v));
       return res;
     };
@@ -454,7 +463,12 @@ export default {
       const auth = await requireAuth(request, env);
       if (!auth.ok) return withCors(auth.res);
 
-      const user = await env.DB.prepare("SELECT id, email, role FROM users WHERE id = ?")
+      const user = await env.DB.prepare(
+        `SELECT u.id, u.email, u.role, cp.first_name
+         FROM users u
+         LEFT JOIN client_profiles cp ON u.id = cp.user_id
+         WHERE u.id = ?`
+      )
         .bind(auth.uid)
         .first();
 
@@ -465,6 +479,7 @@ export default {
           id: user.id,
           email: user.email,
           role: user.role || "client",
+          first_name: user.first_name || null,
         })
       );
     }

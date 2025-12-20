@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Container } from '../components/Container';
 import { useAuth } from '../contexts/AuthContext';
+import { getDisplayName } from '../lib/displayName';
 
 export function BookOnline() {
   const { user } = useAuth();
@@ -47,7 +48,7 @@ export function BookOnline() {
                 marginBottom: 'var(--space-md)',
                 color: 'var(--color-primary)'
               }}>
-                Welcome back, {user.email}!
+                Welcome back, {getDisplayName(user)}!
               </h2>
               <p style={{
                 fontSize: 'var(--font-size-lg)',
