@@ -5,9 +5,24 @@ import { API_BASE_URL } from "../lib/api";
 const WAIVER_CACHE_KEY = 'waiver:signed';
 const WAIVER_CACHE_TOKEN_KEY = 'waiver:token';
 
+function getInitialWaiverState() {
+  const token = localStorage.getItem("token");
+  if (!token) return { loading: false, signed: false };
+
+  const cachedToken = sessionStorage.getItem(WAIVER_CACHE_TOKEN_KEY);
+  const cachedSigned = sessionStorage.getItem(WAIVER_CACHE_KEY);
+
+  if (cachedToken === token && (cachedSigned === "true" || cachedSigned === "false")) {
+    return { loading: false, signed: cachedSigned === "true" };
+  }
+
+  return { loading: true, signed: false };
+}
+
 export function WaiverGate({ children }) {
-  const [loading, setLoading] = useState(true);
-  const [signed, setSigned] = useState(false);
+  const initialState = getInitialWaiverState();
+  const [loading, setLoading] = useState(initialState.loading);
+  const [signed, setSigned] = useState(initialState.signed);
   const [error, setError] = useState(null);
   const ranRef = useRef(false);
 
@@ -22,27 +37,15 @@ export function WaiverGate({ children }) {
       const token = localStorage.getItem("token");
 
       if (!token) {
-        // No token - clear cache and set unsigned
+        // No token - clear cache
         sessionStorage.removeItem(WAIVER_CACHE_KEY);
         sessionStorage.removeItem(WAIVER_CACHE_TOKEN_KEY);
-        if (!didCancel) {
-          setLoading(false);
-          setSigned(false);
-        }
         return;
       }
 
-      // Check cache
-      const cachedToken = sessionStorage.getItem(WAIVER_CACHE_TOKEN_KEY);
-      const cachedSigned = sessionStorage.getItem(WAIVER_CACHE_KEY);
-
-      if (cachedToken === token && (cachedSigned === "true" || cachedSigned === "false")) {
-        // Valid cache - use it
-        console.log('[WaiverGate] Using cached waiver status:', cachedSigned);
-        if (!didCancel) {
-          setSigned(cachedSigned === "true");
-          setLoading(false);
-        }
+      // Check if cache was already used in initialState
+      if (!loading) {
+        // Already loaded from cache, skip fetch
         return;
       }
 
@@ -64,6 +67,7 @@ export function WaiverGate({ children }) {
           // Treat failure as not signed to be safe
           if (!didCancel) {
             setSigned(false);
+            setLoading(false);
             // Cache the negative result
             sessionStorage.setItem(WAIVER_CACHE_TOKEN_KEY, token);
             sessionStorage.setItem(WAIVER_CACHE_KEY, "false");
@@ -102,6 +106,7 @@ export function WaiverGate({ children }) {
 
     return () => {
       didCancel = true;
+      ranRef.current = false; // Reset so effect runs on next mount
     };
   }, []);
 
