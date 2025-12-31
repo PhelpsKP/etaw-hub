@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { ScrollToTop } from './components/ScrollToTop';
+import { RoleRedirect } from './components/RoleRedirect';
 import { MarketingLayout } from './layouts/MarketingLayout';
 import { AppLayout } from './layouts/AppLayout';
 import { Home } from './pages/Home';
@@ -9,7 +11,6 @@ import { About } from './pages/About';
 import { BookOnline } from './pages/BookOnline';
 import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
-import { App as AppPage } from './pages/App';
 import { Admin } from './pages/Admin';
 import { Book } from './pages/Book';
 import { ClientWorkouts } from './pages/ClientWorkouts';
@@ -23,6 +24,7 @@ import { WaiverGate } from "./components/WaiverGate";
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AuthProvider>
         <Routes>
           {/* Marketing Routes */}
@@ -40,11 +42,9 @@ function App() {
             <Route
               path="/app"
               element={
-                <WaiverGate>
-                  <ProtectedRoute>
-                    <AppPage />
-                  </ProtectedRoute>
-                </WaiverGate>
+                <ProtectedRoute>
+                  <RoleRedirect />
+                </ProtectedRoute>
               }
             />
 

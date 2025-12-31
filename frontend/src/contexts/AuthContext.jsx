@@ -55,8 +55,17 @@ export function AuthProvider({ children }) {
     const { token } = await response.json();
     localStorage.setItem('token', token);
 
-    // Fetch user info
-    await checkAuth();
+    // Fetch user info ONCE and both store it and return it
+    const userResponse = await apiRequest('/api/me');
+    if (userResponse.ok) {
+      const userData = await userResponse.json();
+      setUser(userData);
+      return userData;
+    }
+
+    // If /api/me fails, clear token and throw error
+    localStorage.removeItem('token');
+    throw new Error('Failed to fetch user data');
   }
 
   async function signup(email, password) {
@@ -71,8 +80,8 @@ export function AuthProvider({ children }) {
       throw new Error(error.error || 'Signup failed');
     }
 
-    // After signup, log them in
-    await login(email, password);
+    // After signup, log them in and return user data
+    return await login(email, password);
   }
 
   function logout() {

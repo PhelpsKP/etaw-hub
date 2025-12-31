@@ -8,7 +8,7 @@ export function Home() {
   return (
     <div>
       {/* Hero Section */}
-      <section style={{
+      <section className="hero-section" style={{
         background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%)',
         color: 'white',
         padding: 'var(--space-3xl) 0',
@@ -62,8 +62,9 @@ export function Home() {
                   }}>
                     Book a Session
                   </Link>
-                  <Link to="/services" className="btn btn-lg btn-secondary" style={{
-                    borderColor: 'white',
+                  <Link to="/services" className="btn btn-lg" style={{
+                    backgroundColor: 'transparent',
+                    border: '2px solid white',
                     color: 'white'
                   }}>
                     View Services

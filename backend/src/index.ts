@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 import { sha256 } from "@noble/hashes/sha2.js";
 import { bytesToHex } from "@noble/hashes/utils.js";
+import bcrypt from "bcryptjs";
 
 interface Env {
   DB: D1Database;
@@ -28,8 +29,11 @@ function json(data: unknown, status = 200, extraHeaders: Record<string, string> 
 function isAllowedOrigin(origin: string | null): boolean {
   if (!origin) return false;
 
-  // Allow local development
-  if (origin === "http://localhost:5173" || origin === "http://127.0.0.1:5173") {
+  // Allow local development on any port (localhost:* or 127.0.0.1:*)
+  if (origin.match(/^http:\/\/localhost:\d+$/)) {
+    return true;
+  }
+  if (origin.match(/^http:\/\/127\.0\.0\.1:\d+$/)) {
     return true;
   }
 
@@ -52,13 +56,26 @@ function corsHeaders(origin: string | null) {
     "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
     "Access-Control-Allow-Credentials": "true",
+    "Vary": "Origin",
   };
 }
 
-function hashPassword(password: string): string {
+// Legacy SHA-256 hashing (for comparison with old hashes only)
+function hashPasswordLegacy(password: string): string {
   const passwordBytes = encoder.encode(password);
   const hashBytes = sha256(passwordBytes);
   return bytesToHex(hashBytes);
+}
+
+// Modern bcrypt hashing (for new users and upgrades)
+async function hashPasswordBcrypt(password: string): Promise<string> {
+  const saltRounds = 10;
+  return await bcrypt.hash(password, saltRounds);
+}
+
+// Verify bcrypt hash
+async function verifyPasswordBcrypt(password: string, hash: string): Promise<boolean> {
+  return await bcrypt.compare(password, hash);
 }
 
 // Helper: verify JWT, verify session not revoked/expired, return uid/jti
@@ -404,11 +421,11 @@ export default {
         return withCors(json({ error: "Missing email or password" }, 400));
       }
 
-      const password_hash = hashPassword(password);
+      const password_hash = await hashPasswordBcrypt(password);
 
       try {
-        await env.DB.prepare("INSERT INTO users (email, password_hash) VALUES (?, ?)")
-          .bind(email, password_hash)
+        await env.DB.prepare("INSERT INTO users (email, password_hash, password_algo) VALUES (?, ?, ?)")
+          .bind(email, password_hash, "bcrypt")
           .run();
       } catch {
         return withCors(json({ error: "User already exists" }, 409));
@@ -420,16 +437,47 @@ export default {
     // ---------------- LOGIN ----------------
     if (url.pathname === "/auth/login" && request.method === "POST") {
       const { email, password } = await request.json();
-      const password_hash = hashPassword(password);
 
+      // Fetch user with password_hash and password_algo
       const user = await env.DB.prepare(
-        "SELECT id FROM users WHERE email = ? AND password_hash = ?"
+        "SELECT id, password_hash, password_algo FROM users WHERE email = ?"
       )
-        .bind(email, password_hash)
+        .bind(email)
         .first();
 
       if (!user) {
         return withCors(json({ error: "Invalid credentials" }, 401));
+      }
+
+      let passwordValid = false;
+      let needsUpgrade = false;
+
+      // Verify password based on algorithm
+      if (user.password_algo === "bcrypt") {
+        // Modern bcrypt verification
+        passwordValid = await verifyPasswordBcrypt(password, user.password_hash as string);
+      } else if (user.password_algo === "sha256") {
+        // Legacy SHA-256 verification
+        const legacyHash = hashPasswordLegacy(password);
+        passwordValid = legacyHash === user.password_hash;
+        needsUpgrade = passwordValid; // Upgrade if password is correct
+      } else {
+        // Unknown algorithm
+        return withCors(json({ error: "Invalid credentials" }, 401));
+      }
+
+      if (!passwordValid) {
+        return withCors(json({ error: "Invalid credentials" }, 401));
+      }
+
+      // Upgrade legacy SHA-256 hash to bcrypt if needed
+      if (needsUpgrade) {
+        const newHash = await hashPasswordBcrypt(password);
+        await env.DB.prepare(
+          "UPDATE users SET password_hash = ?, password_algo = ? WHERE id = ?"
+        )
+          .bind(newHash, "bcrypt", user.id)
+          .run();
       }
 
       const sessionId = crypto.randomUUID();

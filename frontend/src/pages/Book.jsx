@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { apiRequestJson } from '../lib/api';
 
 export function Book() {
@@ -11,9 +11,12 @@ export function Book() {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [bookingId, setBookingId] = useState(null);
+  const [membershipData, setMembershipData] = useState(null);
+  const [membershipLoading, setMembershipLoading] = useState(true);
 
   useEffect(() => {
     fetchSessions();
+    fetchMembership();
   }, []);
 
   // Client-only guard: redirect admins away from this page
@@ -37,6 +40,19 @@ export function Book() {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function fetchMembership() {
+    try {
+      setMembershipLoading(true);
+      const data = await apiRequestJson('/api/membership/status');
+      setMembershipData(data);
+    } catch (err) {
+      // Silently fail - membership is optional
+      console.error('Failed to fetch membership:', err);
+    } finally {
+      setMembershipLoading(false);
     }
   }
 
@@ -143,6 +159,104 @@ export function Book() {
           color: '#155724'
         }}>
           {successMessage}
+        </div>
+      )}
+
+      {/* Membership Status Card */}
+      {!membershipLoading && <div data-testid="membership-loaded" style={{display:'none'}} />}
+      {!membershipLoading && membershipData && (
+        <div data-testid="membership-card" style={{
+          padding: '1.5rem',
+          backgroundColor: membershipData.membership ? '#e9d5ff' : '#f3f4f6',
+          border: `2px solid ${membershipData.membership ? 'var(--color-primary)' : '#e5e7eb'}`,
+          borderRadius: '8px',
+          marginBottom: '1.5rem'
+        }}>
+          {membershipData.membership ? (
+            <>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '0.75rem',
+                flexWrap: 'wrap',
+                gap: '0.5rem'
+              }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-primary)' }}>
+                    {membershipData.hasUnlimited ? '✨ Unlimited Membership Active' : 'Membership Active'}
+                  </h3>
+                  <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.875rem', color: '#6b7280' }}>
+                    {membershipData.membership.plan === 'circuit' ? 'Circuit Training' : membershipData.membership.plan}
+                    {membershipData.membership.ends_at && ` • Expires ${new Date(membershipData.membership.ends_at).toLocaleDateString()}`}
+                  </p>
+                </div>
+                <Link
+                  to="/app/membership"
+                  data-testid="membership-details-link"
+                  style={{
+                    padding: '0.5rem 1rem',
+                    backgroundColor: 'var(--color-primary)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                    display: 'inline-block'
+                  }}
+                >
+                  View Details
+                </Link>
+              </div>
+              {membershipData.hasUnlimited && (
+                <p style={{
+                  margin: '0.5rem 0 0 0',
+                  fontSize: '0.875rem',
+                  color: '#4b5563',
+                  backgroundColor: 'white',
+                  padding: '0.75rem',
+                  borderRadius: '4px'
+                }}>
+                  <strong>Unlimited Access:</strong> No credits required for circuit training sessions!
+                </p>
+              )}
+            </>
+          ) : (
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '0.5rem'
+            }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 600, color: '#6b7280' }}>
+                  No Active Membership
+                </h3>
+                <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.875rem', color: '#9ca3af' }}>
+                  You can still book sessions using your available credits
+                </p>
+              </div>
+              <Link
+                to="/app/membership"
+                data-testid="membership-learnmore-link"
+                style={{
+                  padding: '0.5rem 1rem',
+                  backgroundColor: '#6c757d',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  fontSize: '0.875rem',
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  display: 'inline-block'
+                }}
+              >
+                Learn More
+              </Link>
+            </div>
+          )}
         </div>
       )}
 

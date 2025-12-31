@@ -7,7 +7,7 @@ export function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
@@ -16,8 +16,15 @@ export function Login() {
     setLoading(true);
 
     try {
-      await login(email, password);
-      navigate('/app');
+      const userData = await login(email, password);
+
+      // Redirect based on role from /api/me
+      if (userData?.role === 'admin') {
+        navigate('/app/admin');
+      } else {
+        // Default to booking page for clients
+        navigate('/app/book');
+      }
     } catch (err) {
       setError(err.message);
     } finally {

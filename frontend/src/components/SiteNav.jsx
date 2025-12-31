@@ -26,26 +26,29 @@ export function SiteNav() {
           justifyContent: 'space-between',
           alignItems: 'center',
           minHeight: '70px',
-          gap: 'var(--space-lg)'
+          gap: 'var(--space-md)',
+          flexWrap: 'wrap'
         }}>
           <Link to="/" style={{
             fontSize: 'var(--font-size-xl)',
             fontWeight: 700,
             color: 'var(--color-primary)',
-            textDecoration: 'none'
+            textDecoration: 'none',
+            whiteSpace: 'nowrap'
           }}>
             Elite Training & Wellness
           </Link>
 
-          <div style={{
+          <div className="nav-links" style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 'var(--space-lg)'
+            gap: 'var(--space-lg)',
+            flexWrap: 'wrap'
           }}>
-            <Link to="/" style={{ fontWeight: 500 }}>Home</Link>
-            <Link to="/services" style={{ fontWeight: 500 }}>Services</Link>
-            <Link to="/about" style={{ fontWeight: 500 }}>About</Link>
-            <Link to="/book" style={{ fontWeight: 500 }}>Book Online</Link>
+            <Link to="/" style={{ fontWeight: 500 }} className="nav-link">Home</Link>
+            <Link to="/services" style={{ fontWeight: 500 }} className="nav-link">Services</Link>
+            <Link to="/about" style={{ fontWeight: 500 }} className="nav-link">About</Link>
+            <Link to="/book" style={{ fontWeight: 500 }} className="nav-link">Book Online</Link>
 
             {user ? (
               <>

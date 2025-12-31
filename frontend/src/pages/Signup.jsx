@@ -16,8 +16,15 @@ export function Signup() {
     setLoading(true);
 
     try {
-      await signup(email, password);
-      navigate('/app');
+      const userData = await signup(email, password);
+
+      // Redirect based on role from /api/me
+      if (userData?.role === 'admin') {
+        navigate('/app/admin');
+      } else {
+        // Default to booking page for new clients
+        navigate('/app/book');
+      }
     } catch (err) {
       setError(err.message);
     } finally {
