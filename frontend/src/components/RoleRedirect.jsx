@@ -20,7 +20,7 @@ export function RoleRedirect() {
     if (user.role === 'admin') {
       navigate('/app/admin', { replace: true });
     } else {
-      // Default to booking for clients
+      // Default to booking for non-admin users
       navigate('/app/book', { replace: true });
     }
   }, [user, loading, navigate]);

@@ -21,12 +21,8 @@ export function Book() {
 
   // Client-only guard: redirect admins away from this page
   useEffect(() => {
-    if (user && user.role !== 'client') {
-      if (user.role === 'admin') {
-        navigate('/app/admin', { replace: true });
-      } else {
-        navigate('/app', { replace: true });
-      }
+    if (user && user.role === 'admin') {
+      navigate('/app/admin', { replace: true });
     }
   }, [user, navigate]);
 

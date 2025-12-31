@@ -37,15 +37,26 @@ export function WaiverGate({ children }) {
       const token = localStorage.getItem("token");
 
       if (!token) {
-        // No token - clear cache
+        // No token - clear cache and set unsigned
         sessionStorage.removeItem(WAIVER_CACHE_KEY);
         sessionStorage.removeItem(WAIVER_CACHE_TOKEN_KEY);
+        if (!didCancel) {
+          setLoading(false);
+          setSigned(false);
+        }
         return;
       }
 
-      // Check if cache was already used in initialState
-      if (!loading) {
-        // Already loaded from cache, skip fetch
+      // Check cache
+      const cachedToken = sessionStorage.getItem(WAIVER_CACHE_TOKEN_KEY);
+      const cachedSigned = sessionStorage.getItem(WAIVER_CACHE_KEY);
+
+      if (cachedToken === token && (cachedSigned === "true" || cachedSigned === "false")) {
+        // Valid cache - use it
+        if (!didCancel) {
+          setSigned(cachedSigned === "true");
+          setLoading(false);
+        }
         return;
       }
 
