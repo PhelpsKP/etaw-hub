@@ -1,0 +1,280 @@
+{
+  "branding": [
+    {
+      "file": "branding/elite-logo-transparent-001.png",
+      "original": "ETAW transparent logo.png"
+    },
+    {
+      "file": "branding/elite-logo-001.jpg",
+      "original": "Elite_Logo_FN_96dpi.jpg"
+    }
+  ],
+  "hero": [
+    {
+      "file": "hero/hero-primary-approachable-coaching-gym-001.jpg",
+      "original": "KH2025-101.jpg"
+    },
+    {
+      "file": "hero/hero-primary-community-group-training-002.jpg",
+      "original": "KH2025-121.jpg"
+    },
+    {
+      "file": "hero/hero-section-atmosphere-strength-facility-001.jpg",
+      "original": "KH2025-215.jpg"
+    },
+    {
+      "file": "hero/hero-section-facility-open-space-002.jpg",
+      "original": "KH2025-103.jpg"
+    },
+    {
+      "file": "hero/hero-secondary-strong-coach-identity-001.jpg",
+      "original": "KH2025-112.jpg"
+    },
+    {
+      "file": "hero/hero-section-equipment-strength-focus-003.jpg",
+      "original": "KH2025-219.jpg"
+    },
+    {
+      "file": "hero/hero-secondary-personal-connection-coach-002.jpg",
+      "original": "4N6A7015 (2).jpg"
+    }
+  ],
+  "gallery": [
+    {
+      "file": "gallery/gallery-boxing-training-gloves-closeup-001.jpg",
+      "original": "4N6A6806.jpg"
+    },
+    {
+      "file": "gallery/gallery-boxing-coaching-padwork-001.jpg",
+      "original": "4N6A6962.jpg"
+    },
+    {
+      "file": "gallery/gallery-boxing-training-ring-001.jpg",
+      "original": "KH2025-001.jpg"
+    },
+    {
+      "file": "gallery/gallery-brand-coach-seated-casual-001.jpg",
+      "original": "KH2025-003.jpg"
+    },
+    {
+      "file": "gallery/gallery-boxing-training-solo-stance-001.jpg",
+      "original": "KH2025-018.jpg"
+    },
+    {
+      "file": "gallery/gallery-boxing-training-heavybag-001.jpg",
+      "original": "KH2025-026.jpg"
+    },
+    {
+      "file": "gallery/gallery-boxing-training-heavybag-002.jpg",
+      "original": "KH2025-029.jpg"
+    },
+    {
+      "file": "gallery/gallery-boxing-training-gloves-portrait-001.jpg",
+      "original": "KH2025-032.jpg"
+    },
+    {
+      "file": "gallery/gallery-boxing-training-gloves-portrait-002.jpg",
+      "original": "KH2025-033.jpg"
+    },
+    {
+      "file": "gallery/gallery-boxing-training-gloves-portrait-003.jpg",
+      "original": "KH2025-037.jpg"
+    },
+    {
+      "file": "gallery/gallery-strength-training-floor-001.jpg",
+      "original": "KH2025-039.jpg"
+    },
+    {
+      "file": "gallery/gallery-strength-training-floor-002.jpg",
+      "original": "KH2025-040.jpg"
+    },
+    {
+      "file": "gallery/gallery-strength-training-floor-003.jpg",
+      "original": "KH2025-044.jpg"
+    },
+    {
+      "file": "gallery/gallery-strength-training-floor-004.jpg",
+      "original": "KH2025-046.jpg"
+    },
+    {
+      "file": "gallery/gallery-boxing-training-heavybag-003.jpg",
+      "original": "KH2025-054.jpg"
+    },
+    {
+      "file": "gallery/gallery-boxing-training-heavybag-004.jpg",
+      "original": "KH2025-055.jpg"
+    },
+    {
+      "file": "gallery/gallery-boxing-training-heavybag-005.jpg",
+      "original": "KH2025-056.jpg"
+    },
+    {
+      "file": "gallery/gallery-boxing-coaching-padwork-002.jpg",
+      "original": "KH2025-063.jpg"
+    },
+    {
+      "file": "gallery/gallery-boxing-coaching-padwork-003.jpg",
+      "original": "KH2025-066.jpg"
+    },
+    {
+      "file": "gallery/gallery-boxing-training-pair-001.jpg",
+      "original": "KH2025-083.jpg"
+    },
+    {
+      "file": "gallery/gallery-boxing-training-pair-002.jpg",
+      "original": "KH2025-084.jpg"
+    },
+    {
+      "file": "gallery/gallery-boxing-training-pair-003.jpg",
+      "original": "KH2025-088.jpg"
+    },
+    {
+      "file": "gallery/gallery-boxing-training-pair-004.jpg",
+      "original": "KH2025-093.jpg"
+    },
+    {
+      "file": "gallery/gallery-boxing-training-pair-005.jpg",
+      "original": "KH2025-097.jpg"
+    },
+    {
+      "file": "gallery/gallery-conditioning-equipment-tire-001.jpg",
+      "original": "KH2025-108.jpg"
+    },
+    {
+      "file": "gallery/gallery-strength-training-floor-005.jpg",
+      "original": "KH2025-109.jpg"
+    },
+    {
+      "file": "gallery/gallery-mixed-training-gym-wide-001.jpg",
+      "original": "KH2025-114.jpg"
+    },
+    {
+      "file": "gallery/gallery-mixed-training-gym-wide-002.jpg",
+      "original": "KH2025-126.jpg"
+    },
+    {
+      "file": "gallery/gallery-mixed-training-gym-wide-003.jpg",
+      "original": "KH2025-209.jpg"
+    },
+    {
+      "file": "gallery/gallery-mixed-training-gym-wide-004.jpg",
+      "original": "KH2025-210.jpg"
+    },
+    {
+      "file": "gallery/gallery-facility-equipment-racks-001.jpg",
+      "original": "KH2025-211.jpg"
+    },
+    {
+      "file": "gallery/gallery-facility-equipment-machines-001.jpg",
+      "original": "KH2025-217.jpg"
+    },
+    {
+      "file": "gallery/gallery-facility-equipment-machines-002.jpg",
+      "original": "KH2025-218.jpg"
+    },
+    {
+      "file": "gallery/gallery-conditioning-equipment-kettlebells-001.jpg",
+      "original": "KH2025-220.jpg"
+    }
+  ],
+  "people": [
+    {
+      "file": "people/people-pet-gym-community-001.jpg",
+      "original": "Screenshot 2024-07-29 131500.jpg"
+    },
+    {
+      "file": "people/people-client-boxing-training-001.jpg",
+      "original": "KH2025-122.jpg"
+    },
+    {
+      "file": "people/people-coach-boxing-coaching-001.jpg",
+      "original": "KH2025-078.jpg"
+    },
+    {
+      "file": "people/people-coach-strength-coaching-002.jpg",
+      "original": "KH2025-134.jpg"
+    },
+    {
+      "file": "people/people-client-partner-training-002.jpg",
+      "original": "KH2025-137.jpg"
+    },
+    {
+      "file": "people/people-coach-candid-gym-003.jpg",
+      "original": "KH2025-002.jpg"
+    },
+    {
+      "file": "people/people-client-boxing-drills-003.jpg",
+      "original": "KH2025-072.jpg"
+    },
+    {
+      "file": "people/people-client-boxing-training-004.jpg",
+      "original": "KH2025-073.jpg"
+    },
+    {
+      "file": "people/people-client-functional-training-005.jpg",
+      "original": "KH2025-123.jpg"
+    }
+  ],
+  "facility": [
+    {
+      "file": "facility/facility-strength-section-coaching-in-action-001.png",
+      "original": "Gym3-.png"
+    },
+    {
+      "file": "facility/facility-strength-section-coaching-in-action-002.png",
+      "original": "Gym6-.png"
+    },
+    {
+      "file": "facility/facility-group-section-training-floor-wide-001.png",
+      "original": "Gym10-.png"
+    },
+    {
+      "file": "facility/facility-boxing-section-padwork-coaching-001.png",
+      "original": "Gym28-.png"
+    },
+    {
+      "file": "facility/facility-boxing-section-heavybag-coaching-001.png",
+      "original": "Gym31-.png"
+    },
+    {
+      "file": "facility/facility-boxing-background-heavybag-action-001.png",
+      "original": "Gym34-.png"
+    },
+    {
+      "file": "facility/facility-boxing-hero-ring-training-001.png",
+      "original": "Gym37-.png"
+    },
+    {
+      "file": "facility/facility-boxing-section-coach-client-closeup-001.png",
+      "original": "Gym40-.png"
+    },
+    {
+      "file": "facility/facility-boxing-section-speedbag-training-001.png",
+      "original": "Gym44-.png"
+    },
+    {
+      "file": "facility/facility-boxing-section-floor-drills-001.png",
+      "original": "Gym50-.png"
+    },
+    {
+      "file": "facility/facility-boxing-section-floor-drills-002.png",
+      "original": "Gym53-.png"
+    },
+    {
+      "file": "facility/facility-boxing-background-wall-bags-001.png",
+      "original": "Gym73-.png"
+    },
+    {
+      "file": "facility/facility-brand-supporting-coach-relaxed-001.png",
+      "original": "Gym74-.png"
+    },
+    {
+      "file": "facility/facility-brand-supporting-coach-seated-002.png",
+      "original": "Gym75-.png"
+    },
+    {
+      "file": "facility/facility-brand-supporting-coach-with-dog-003.png",
+      "original": "Gym80-.png"
+    }
+  ]
+}

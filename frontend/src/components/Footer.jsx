@@ -27,7 +27,7 @@ export function Footer() {
               color: 'var(--color-text-light)',
               fontSize: 'var(--font-size-sm)'
             }}>
-              Personalized fitness training designed to help you reach your goals.
+              Coach-led training built around strength, conditioning, and boxing fundamentals.
             </p>
           </div>
 
@@ -44,7 +44,8 @@ export function Footer() {
               fontSize: 'var(--font-size-sm)',
               lineHeight: 1.6
             }}>
-              Serving the Greater Atlanta Area<br />
+              2514 Leslie Ave<br />
+              Cincinnati, OH 45212<br />
               By Appointment Only
             </p>
           </div>
@@ -62,8 +63,19 @@ export function Footer() {
               fontSize: 'var(--font-size-sm)',
               lineHeight: 1.6
             }}>
-              Email: info@elitetrainingwellness.com<br />
-              Phone: (555) 123-4567
+              <a href="mailto:etw.katie@gmail.com" style={{
+                color: 'var(--color-text-light)',
+                textDecoration: 'none'
+              }}>
+                etw.katie@gmail.com
+              </a>
+              <br />
+              <a href="tel:+15138079388" style={{
+                color: 'var(--color-text-light)',
+                textDecoration: 'none'
+              }}>
+                (513) 807-9388
+              </a>
             </p>
           </div>
         </div>

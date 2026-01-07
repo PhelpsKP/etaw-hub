@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Container } from '../components/Container';
+import { hero, people } from '../assets/images/imageRegistry';
 
 export function About() {
   return (
@@ -16,17 +17,8 @@ export function About() {
             marginBottom: 'var(--space-md)',
             color: 'var(--color-text)'
           }}>
-            About Us
+            Welcome to Elite Training & Wellness
           </h1>
-          <p style={{
-            textAlign: 'center',
-            fontSize: 'var(--font-size-lg)',
-            color: 'var(--color-text-light)',
-            maxWidth: 'var(--maxw-content)',
-            margin: '0 auto'
-          }}>
-            Committed to helping you achieve sustainable fitness results through personalized training.
-          </p>
         </Container>
       </section>
 
@@ -36,96 +28,162 @@ export function About() {
           margin: '0 auto',
           padding: 'var(--space-3xl) 0'
         }}>
-          <div className="card" style={{ marginBottom: 'var(--space-2xl)' }}>
-            <h2 style={{
-              fontSize: 'var(--font-size-3xl)',
-              fontWeight: 700,
-              color: 'var(--color-primary)',
+          {/* Welcome Text */}
+          <div style={{
+            marginBottom: 'var(--space-3xl)'
+          }}>
+            <p style={{
+              fontSize: 'var(--font-size-lg)',
+              lineHeight: 1.8,
+              color: 'var(--color-text)',
               marginBottom: 'var(--space-lg)'
             }}>
-              Meet Katie
-            </h2>
-            <p style={{
-              fontSize: 'var(--font-size-lg)',
-              lineHeight: 1.8,
-              color: 'var(--color-text)',
-              marginBottom: 'var(--space-md)'
-            }}>
-              Katie brings over a decade of experience in personal training and fitness coaching.
-              With certifications in strength and conditioning, nutrition, and functional movement,
-              she creates comprehensive programs that address both physical performance and overall wellness.
+              At Elite Training & Wellness, we believe fitness is more than just workouts, it's a lifestyle. Here, you don't just train hard — you train smart, build lasting habits, and create positive change that strengthens your body and your life.
             </p>
             <p style={{
               fontSize: 'var(--font-size-lg)',
               lineHeight: 1.8,
               color: 'var(--color-text)',
-              marginBottom: 'var(--space-md)'
+              marginBottom: 'var(--space-lg)'
             }}>
-              Her approach combines evidence-based training methods with a deep understanding of
-              individual needs, ensuring every client receives the attention and guidance necessary
-              to reach their goals safely and effectively.
+              We chose the name Elite because we stand apart not just in instruction, but in intentional guidance. We don't simply show you how to move; we help you understand why you're doing it — from safe, effective form to goal-focused strength and conditioning — because the best results come from training with purpose.
             </p>
             <p style={{
               fontSize: 'var(--font-size-lg)',
               lineHeight: 1.8,
-              color: 'var(--color-text)'
+              color: 'var(--color-text)',
+              marginBottom: 'var(--space-lg)'
             }}>
-              Whether you're training for a specific event, recovering from an injury, or simply
-              looking to improve your overall fitness, Katie will work with you to develop a plan
-              that fits your lifestyle and helps you achieve lasting results.
+              We also know that true transformation goes beyond physical performance and physique. That's why wellness is in our name, and guides everything we do. We combine proper training with habits that support long-term health, balanced living, and a mindset that keeps you dedicated for years to come.
+            </p>
+            <p style={{
+              fontSize: 'var(--font-size-lg)',
+              lineHeight: 1.8,
+              color: 'var(--color-text)',
+              marginBottom: 'var(--space-lg)'
+            }}>
+              Whether your goal is more strength, confidence, energy, or something else entirely, we'll work together to build habits that last a lifetime.
+            </p>
+            <p style={{
+              fontSize: 'var(--font-size-lg)',
+              lineHeight: 1.8,
+              color: 'var(--color-text)',
+              marginBottom: 'var(--space-lg)'
+            }}>
+              You're not just signing up for a gym; you're starting a lifestyle shift.
+            </p>
+            <p style={{
+              fontSize: 'var(--font-size-lg)',
+              lineHeight: 1.8,
+              color: 'var(--color-text)',
+              fontWeight: 600
+            }}>
+              Let's build something strong — together.
             </p>
           </div>
 
+          {/* Katie Image with Certifications */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: 'var(--space-2xl)',
+            alignItems: 'start',
+            marginBottom: 'var(--space-3xl)'
+          }}>
+            <div>
+              <img
+                src={hero.coachIdentity}
+                alt="Katie Harrington, owner and head coach at Elite Training & Wellness"
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  borderRadius: 'var(--radius-lg)',
+                  boxShadow: 'var(--shadow)'
+                }}
+              />
+            </div>
+            <div>
+              <h2 style={{
+                fontSize: 'var(--font-size-2xl)',
+                fontWeight: 700,
+                color: 'var(--color-primary)',
+                marginBottom: 'var(--space-lg)'
+              }}>
+                Experience & Certifications
+              </h2>
+              <ul style={{
+                listStyle: 'disc',
+                marginLeft: 'var(--space-lg)',
+                color: 'var(--color-text)',
+                lineHeight: 1.8
+              }}>
+                <li style={{ marginBottom: 'var(--space-sm)' }}>ISSA Certified Personal Trainer</li>
+                <li style={{ marginBottom: 'var(--space-sm)' }}>ISSA Certified Nutrition Coach</li>
+                <li style={{ marginBottom: 'var(--space-sm)' }}>USA Boxing Certified Coach</li>
+                <li style={{ marginBottom: 'var(--space-sm)' }}>Bachelors of Science in Psychology (Sports Management Minor)</li>
+                <li style={{ marginBottom: 'var(--space-sm)' }}>Certified in safe and proper body movement and equipment use by the YMCA</li>
+                <li style={{ marginBottom: 'var(--space-sm)' }}>Certified in CPR, first aid, bloodborne pathogens, and AED use</li>
+                <li style={{ marginBottom: 'var(--space-sm)' }}>12+ years teaching and coaching multiple sports, including boxing</li>
+                <li style={{ marginBottom: 'var(--space-sm)' }}>Former assistant coach, Cincinnati High School Boxing team</li>
+                <li style={{ marginBottom: 'var(--space-sm)' }}>Former president, University of Cincinnati Boxing Club (3 years)</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Coaching Images Row */}
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: 'var(--space-xl)',
+            gap: 'var(--space-lg)',
             marginBottom: 'var(--space-3xl)'
           }}>
             <div style={{
-              padding: 'var(--space-xl)',
-              backgroundColor: 'var(--color-surface)',
+              overflow: 'hidden',
               borderRadius: 'var(--radius-lg)',
-              textAlign: 'center'
+              boxShadow: 'var(--shadow)'
             }}>
-              <h3 style={{
-                fontSize: 'var(--font-size-xl)',
-                fontWeight: 700,
-                marginBottom: 'var(--space-md)',
-                color: 'var(--color-primary)'
-              }}>
-                Our Mission
-              </h3>
-              <p style={{
-                color: 'var(--color-text-light)',
-                lineHeight: 1.7
-              }}>
-                To empower individuals to achieve their fitness goals through personalized training,
-                expert guidance, and unwavering support in a welcoming environment.
-              </p>
+              <img
+                src={people.coachBoxing}
+                alt="Katie coaching boxing technique"
+                style={{
+                  width: '100%',
+                  height: '300px',
+                  objectFit: 'cover',
+                  display: 'block'
+                }}
+              />
             </div>
-
             <div style={{
-              padding: 'var(--space-xl)',
-              backgroundColor: 'var(--color-surface)',
+              overflow: 'hidden',
               borderRadius: 'var(--radius-lg)',
-              textAlign: 'center'
+              boxShadow: 'var(--shadow)'
             }}>
-              <h3 style={{
-                fontSize: 'var(--font-size-xl)',
-                fontWeight: 700,
-                marginBottom: 'var(--space-md)',
-                color: 'var(--color-primary)'
-              }}>
-                Our Values
-              </h3>
-              <p style={{
-                color: 'var(--color-text-light)',
-                lineHeight: 1.7
-              }}>
-                We believe in sustainable progress over quick fixes, individualized attention over
-                one-size-fits-all programs, and building strength from the inside out.
-              </p>
+              <img
+                src={people.coachStrength}
+                alt="Katie coaching strength training"
+                style={{
+                  width: '100%',
+                  height: '300px',
+                  objectFit: 'cover',
+                  display: 'block'
+                }}
+              />
+            </div>
+            <div style={{
+              overflow: 'hidden',
+              borderRadius: 'var(--radius-lg)',
+              boxShadow: 'var(--shadow)'
+            }}>
+              <img
+                src={people.coachCandid}
+                alt="Katie in the gym environment"
+                style={{
+                  width: '100%',
+                  height: '300px',
+                  objectFit: 'cover',
+                  display: 'block'
+                }}
+              />
             </div>
           </div>
 
@@ -140,14 +198,14 @@ export function About() {
               fontWeight: 700,
               marginBottom: 'var(--space-md)'
             }}>
-              Start Your Fitness Journey
+              Ready to train?
             </h2>
             <p style={{
               fontSize: 'var(--font-size-lg)',
               color: 'var(--color-text-light)',
               marginBottom: 'var(--space-xl)'
             }}>
-              Join Elite Training & Wellness and discover what you're capable of achieving.
+              Book your first session and we'll build a plan that fits your goals.
             </p>
             <Link to="/book" className="btn btn-primary btn-lg">
               Book Your First Session
