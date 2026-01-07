@@ -1,3 +1,16 @@
+/**
+ * Client Intake Form - Based on Katie's Intake Packet
+ *
+ * Smoke Test Plan:
+ * 1. Sign up new user → redirected to /waiver
+ * 2. Sign waiver → redirected to /app/intake
+ * 3. Fill out intake form with all required fields
+ * 4. Submit → redirected to /app/book
+ * 5. Verify submission stored in DB (admin can view)
+ * 6. Try to book session → should succeed (backend checks intake)
+ * 7. Try to access /app/book directly without intake → redirected to /app/intake
+ */
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container } from '../components/Container';
@@ -11,61 +24,78 @@ export function ClientIntake() {
   const [successMessage, setSuccessMessage] = useState('');
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);
 
-  // Personal Information
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  // PERSONAL INFO
+  const [name, setName] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
+  const [height, setHeight] = useState('');
   const [address, setAddress] = useState('');
-  const [emergencyName, setEmergencyName] = useState('');
-  const [emergencyPhone, setEmergencyPhone] = useState('');
-  const [emergencyRelationship, setEmergencyRelationship] = useState('');
-
-  // PAR-Q (Physical Activity Readiness Questionnaire)
-  const [parq1, setParq1] = useState(false); // Heart condition
-  const [parq2, setParq2] = useState(false); // Chest pain
-  const [parq3, setParq3] = useState(false); // Dizziness/loss of consciousness
-  const [parq4, setParq4] = useState(false); // Bone/joint problem
-  const [parq5, setParq5] = useState(false); // Blood pressure/heart medication
-  const [parq6, setParq6] = useState(false); // Other reason
-  const [parq7, setParq7] = useState(false); // Pregnant
-
-  // Health Information
-  const [medications, setMedications] = useState('');
-  const [injuries, setInjuries] = useState('');
-  const [medicalConditions, setMedicalConditions] = useState('');
-  const [surgeries, setSurgeries] = useState('');
-  const [physicianClearance, setPhysicianClearance] = useState('no');
-
-  // Lifestyle
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [zip, setZip] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [employer, setEmployer] = useState('');
   const [occupation, setOccupation] = useState('');
-  const [stressLevel, setStressLevel] = useState('moderate');
+  const [emergencyContact, setEmergencyContact] = useState('');
+  const [emergencyRelationship, setEmergencyRelationship] = useState('');
+  const [emergencyPhone, setEmergencyPhone] = useState('');
+  const [altContact, setAltContact] = useState('');
+  const [referralSource, setReferralSource] = useState('');
+
+  // LIFESTYLE QUESTIONNAIRE
+  const [smoker, setSmoker] = useState('no');
+  const [smokesPerDay, setSmokesPerDay] = useState('');
+  const [formerSmokerQuitDate, setFormerSmokerQuitDate] = useState('');
+  const [drinksAlcohol, setDrinksAlcohol] = useState('no');
+  const [alcoholPerWeek, setAlcoholPerWeek] = useState('');
+  const [takesSupplements, setTakesSupplements] = useState('no');
+  const [supplementsList, setSupplementsList] = useState('');
   const [sleepHours, setSleepHours] = useState('');
-  const [sleepQuality, setSleepQuality] = useState('good');
-  const [tobaccoUse, setTobaccoUse] = useState('no');
-  const [alcoholUse, setAlcoholUse] = useState('occasional');
 
-  // Exercise History
-  const [currentlyExercising, setCurrentlyExercising] = useState('no');
-  const [exerciseFrequency, setExerciseFrequency] = useState('');
-  const [exerciseTypes, setExerciseTypes] = useState([]);
-  const [exerciseHistory, setExerciseHistory] = useState('');
+  // GOALS / PROGRAM INFO
+  const [healthGoal1, setHealthGoal1] = useState('');
+  const [healthGoal2, setHealthGoal2] = useState('');
+  const [healthGoal3, setHealthGoal3] = useState('');
+  const [goalsImportance, setGoalsImportance] = useState('');
+  const [trainerImportance, setTrainerImportance] = useState('');
+  const [obstacle1, setObstacle1] = useState('');
+  const [obstacle2, setObstacle2] = useState('');
+  const [obstacle3, setObstacle3] = useState('');
 
-  // Goals
-  const [primaryGoals, setPrimaryGoals] = useState([]);
-  const [specificGoals, setSpecificGoals] = useState('');
-  const [timeline, setTimeline] = useState('');
-  const [obstacles, setObstacles] = useState('');
-
-  // Nutrition
+  // NUTRITION
+  const [nutritionRating, setNutritionRating] = useState('');
   const [mealsPerDay, setMealsPerDay] = useState('');
-  const [waterIntake, setWaterIntake] = useState('');
-  const [dietaryRestrictions, setDietaryRestrictions] = useState('');
-  const [nutritionChallenges, setNutritionChallenges] = useState('');
+  const [skipMeals, setSkipMeals] = useState('no');
+  const [eatingActivities, setEatingActivities] = useState('');
+  const [waterGlasses, setWaterGlasses] = useState('');
+  const [regularFoods, setRegularFoods] = useState('');
+  const [knowsCalories, setKnowsCalories] = useState('no');
+  const [dailyCalories, setDailyCalories] = useState('');
+  const [nutritionGoal1, setNutritionGoal1] = useState('');
+  const [nutritionGoal2, setNutritionGoal2] = useState('');
+  const [nutritionGoal3, setNutritionGoal3] = useState('');
+  const [additionalConcerns, setAdditionalConcerns] = useState('');
+
+  // PAR-Q (Health Screening)
+  const [parq1, setParq1] = useState('');
+  const [parq2, setParq2] = useState('');
+  const [parq3, setParq3] = useState('');
+  const [parq4, setParq4] = useState('');
+  const [parq5, setParq5] = useState('');
+  const [parq6, setParq6] = useState('');
+  const [parq7, setParq7] = useState('');
+  const [parqDetails, setParqDetails] = useState('');
+
+  // CERTIFICATION + SIGNATURE
+  const [certificationAgreed, setCertificationAgreed] = useState(false);
+  const [signature, setSignature] = useState('');
+  const [signatureDate, setSignatureDate] = useState('');
 
   useEffect(() => {
     checkStatus();
+    // Auto-fill today's date
+    const today = new Date().toISOString().split('T')[0];
+    setSignatureDate(today);
   }, []);
 
   async function checkStatus() {
@@ -82,99 +112,93 @@ export function ClientIntake() {
     }
   }
 
-  function handleExerciseTypeToggle(type) {
-    setExerciseTypes(prev =>
-      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
-    );
-  }
-
-  function handleGoalToggle(goal) {
-    setPrimaryGoals(prev =>
-      prev.includes(goal) ? prev.filter(g => g !== goal) : [...prev, goal]
-    );
-  }
-
   async function handleSubmit(e) {
     e.preventDefault();
     setError(null);
     setSuccessMessage('');
 
-    // Validate PAR-Q - if any yes, need physician clearance
-    const hasParqYes = parq1 || parq2 || parq3 || parq4 || parq5 || parq6 || parq7;
-    if (hasParqYes && physicianClearance === 'no') {
-      setError('Based on your health screening responses, you must obtain physician clearance before starting a fitness program. Please consult your doctor and update your response.');
+    // Check if any PAR-Q is YES and details not provided
+    const hasParqYes = [parq1, parq2, parq3, parq4, parq5, parq6, parq7].some(q => q === 'yes');
+    if (hasParqYes && !parqDetails.trim()) {
+      setError('You answered YES to a PAR-Q question. Please provide details.');
       return;
     }
 
     const intakeData = {
-      // Personal
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
-      email: email.trim(),
-      phone: phone.trim(),
-      dateOfBirth: dateOfBirth,
-      address: address.trim(),
-      emergencyContact: {
-        name: emergencyName.trim(),
-        phone: emergencyPhone.trim(),
-        relationship: emergencyRelationship.trim()
-      },
-
-      // PAR-Q
-      parq: {
-        heartCondition: parq1,
-        chestPain: parq2,
-        dizziness: parq3,
-        boneJointProblem: parq4,
-        bloodPressureMedication: parq5,
-        otherReason: parq6,
-        pregnant: parq7,
-        anyYes: hasParqYes
-      },
-
-      // Health
-      health: {
-        medications: medications.trim(),
-        injuries: injuries.trim(),
-        medicalConditions: medicalConditions.trim(),
-        surgeries: surgeries.trim(),
-        physicianClearance: physicianClearance
-      },
-
-      // Lifestyle
-      lifestyle: {
+      personalInfo: {
+        name: name.trim(),
+        dateOfBirth: dateOfBirth,
+        height: height.trim(),
+        address: address.trim(),
+        city: city.trim(),
+        state: state.trim(),
+        zip: zip.trim(),
+        phone: phone.trim(),
+        email: email.trim(),
+        employer: employer.trim(),
         occupation: occupation.trim(),
-        stressLevel: stressLevel,
-        sleepHours: sleepHours,
-        sleepQuality: sleepQuality,
-        tobaccoUse: tobaccoUse,
-        alcoholUse: alcoholUse
+        emergencyContact: emergencyContact.trim(),
+        emergencyRelationship: emergencyRelationship.trim(),
+        emergencyPhone: emergencyPhone.trim(),
+        altContact: altContact.trim(),
+        referralSource: referralSource.trim()
       },
-
-      // Exercise
-      exercise: {
-        currentlyExercising: currentlyExercising,
-        frequency: exerciseFrequency,
-        types: exerciseTypes,
-        history: exerciseHistory.trim()
+      lifestyle: {
+        smoker: smoker,
+        smokesPerDay: smokesPerDay.trim(),
+        formerSmokerQuitDate: formerSmokerQuitDate.trim(),
+        drinksAlcohol: drinksAlcohol,
+        alcoholPerWeek: alcoholPerWeek.trim(),
+        takesSupplements: takesSupplements,
+        supplementsList: supplementsList.trim(),
+        sleepHours: sleepHours.trim()
       },
-
-      // Goals
       goals: {
-        primary: primaryGoals,
-        specific: specificGoals.trim(),
-        timeline: timeline.trim(),
-        obstacles: obstacles.trim()
+        healthGoals: [
+          healthGoal1.trim(),
+          healthGoal2.trim(),
+          healthGoal3.trim()
+        ],
+        goalsImportance: goalsImportance,
+        trainerImportance: trainerImportance.trim(),
+        obstacles: [
+          obstacle1.trim(),
+          obstacle2.trim(),
+          obstacle3.trim()
+        ]
       },
-
-      // Nutrition
       nutrition: {
-        mealsPerDay: mealsPerDay,
-        waterIntake: waterIntake,
-        dietaryRestrictions: dietaryRestrictions.trim(),
-        challenges: nutritionChallenges.trim()
+        rating: nutritionRating,
+        mealsPerDay: mealsPerDay.trim(),
+        skipMeals: skipMeals,
+        eatingActivities: eatingActivities.trim(),
+        waterGlasses: waterGlasses.trim(),
+        regularFoods: regularFoods.trim(),
+        knowsCalories: knowsCalories,
+        dailyCalories: dailyCalories.trim(),
+        nutritionGoals: [
+          nutritionGoal1.trim(),
+          nutritionGoal2.trim(),
+          nutritionGoal3.trim()
+        ],
+        additionalConcerns: additionalConcerns.trim()
       },
-
+      parq: {
+        question1: parq1,
+        question2: parq2,
+        question3: parq3,
+        question4: parq4,
+        question5: parq5,
+        question6: parq6,
+        question7: parq7,
+        hasYes: hasParqYes,
+        details: parqDetails.trim()
+      },
+      certification: {
+        agreed: certificationAgreed,
+        signature: signature.trim(),
+        date: signatureDate
+      },
       submittedAt: new Date().toISOString()
     };
 
@@ -188,10 +212,10 @@ export function ClientIntake() {
         })
       });
 
-      setSuccessMessage('Intake form submitted successfully!');
+      setSuccessMessage('Intake form submitted successfully! Redirecting...');
       setTimeout(() => {
-        navigate('/app', { replace: true });
-      }, 2000);
+        navigate('/app/book', { replace: true });
+      }, 1500);
     } catch (err) {
       setError(err.message || 'Failed to submit intake form');
     } finally {
@@ -231,23 +255,14 @@ export function ClientIntake() {
     border: '1px solid #dee2e6'
   };
 
-  const checkboxLabelStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    marginBottom: '8px',
-    fontSize: '14px',
-    cursor: 'pointer'
-  };
-
   return (
     <Container>
-      <div style={{ maxWidth: '800px', margin: '40px auto', padding: '24px' }}>
+      <div style={{ maxWidth: '900px', margin: '40px auto', padding: '24px' }}>
         <h1 style={{ marginBottom: '8px' }}>Client Intake Form</h1>
         <p style={{ color: '#6c757d', marginBottom: '24px' }}>
           {alreadySubmitted
             ? 'You have already submitted your intake form. You can update it below if needed.'
-            : 'Please complete this intake form to help us design the best fitness program for you.'}
+            : 'Please complete this form to help us design the best fitness program for you.'}
         </p>
 
         {error && (
@@ -277,41 +292,82 @@ export function ClientIntake() {
         )}
 
         <form onSubmit={handleSubmit}>
-          {/* Personal Information */}
+          {/* PERSONAL INFO */}
           <div style={sectionStyle}>
             <h2 style={{ marginBottom: '16px', fontSize: '20px' }}>Personal Information</h2>
 
+            <label style={labelStyle}>Name *</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              style={inputStyle}
+              required
+            />
+
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
               <div>
-                <label style={labelStyle}>First Name *</label>
+                <label style={labelStyle}>Date of Birth *</label>
                 <input
-                  type="text"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
+                  type="date"
+                  value={dateOfBirth}
+                  onChange={(e) => setDateOfBirth(e.target.value)}
                   style={inputStyle}
                   required
                 />
               </div>
               <div>
-                <label style={labelStyle}>Last Name *</label>
+                <label style={labelStyle}>Height</label>
                 <input
                   type="text"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
+                  value={height}
+                  onChange={(e) => setHeight(e.target.value)}
                   style={inputStyle}
-                  required
+                  placeholder="e.g., 5'10&quot;"
                 />
               </div>
             </div>
 
-            <label style={labelStyle}>Email *</label>
+            <label style={labelStyle}>Address / Apt #</label>
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
               style={inputStyle}
-              required
             />
+
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '16px' }}>
+              <div>
+                <label style={labelStyle}>City</label>
+                <input
+                  type="text"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  style={inputStyle}
+                />
+              </div>
+              <div>
+                <label style={labelStyle}>State</label>
+                <input
+                  type="text"
+                  value={state}
+                  onChange={(e) => setState(e.target.value)}
+                  style={inputStyle}
+                  maxLength="2"
+                  placeholder="CA"
+                />
+              </div>
+              <div>
+                <label style={labelStyle}>Zip</label>
+                <input
+                  type="text"
+                  value={zip}
+                  onChange={(e) => setZip(e.target.value)}
+                  style={inputStyle}
+                  maxLength="10"
+                />
+              </div>
+            </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
               <div>
@@ -325,38 +381,61 @@ export function ClientIntake() {
                 />
               </div>
               <div>
-                <label style={labelStyle}>Date of Birth *</label>
+                <label style={labelStyle}>Email *</label>
                 <input
-                  type="date"
-                  value={dateOfBirth}
-                  onChange={(e) => setDateOfBirth(e.target.value)}
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   style={inputStyle}
                   required
                 />
               </div>
             </div>
 
-            <label style={labelStyle}>Address</label>
-            <input
-              type="text"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              style={inputStyle}
-              placeholder="Street, City, State, ZIP"
-            />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div>
+                <label style={labelStyle}>Employer</label>
+                <input
+                  type="text"
+                  value={employer}
+                  onChange={(e) => setEmployer(e.target.value)}
+                  style={inputStyle}
+                />
+              </div>
+              <div>
+                <label style={labelStyle}>Occupation</label>
+                <input
+                  type="text"
+                  value={occupation}
+                  onChange={(e) => setOccupation(e.target.value)}
+                  style={inputStyle}
+                />
+              </div>
+            </div>
 
             <h3 style={{ marginTop: '24px', marginBottom: '16px', fontSize: '18px' }}>Emergency Contact</h3>
 
-            <label style={labelStyle}>Emergency Contact Name *</label>
+            <label style={labelStyle}>Emergency Contact *</label>
             <input
               type="text"
-              value={emergencyName}
-              onChange={(e) => setEmergencyName(e.target.value)}
+              value={emergencyContact}
+              onChange={(e) => setEmergencyContact(e.target.value)}
               style={inputStyle}
               required
             />
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div>
+                <label style={labelStyle}>Relationship *</label>
+                <input
+                  type="text"
+                  value={emergencyRelationship}
+                  onChange={(e) => setEmergencyRelationship(e.target.value)}
+                  style={inputStyle}
+                  placeholder="e.g., Spouse, Parent"
+                  required
+                />
+              </div>
               <div>
                 <label style={labelStyle}>Emergency Contact Phone *</label>
                 <input
@@ -367,394 +446,685 @@ export function ClientIntake() {
                   required
                 />
               </div>
-              <div>
-                <label style={labelStyle}>Relationship *</label>
-                <input
-                  type="text"
-                  value={emergencyRelationship}
-                  onChange={(e) => setEmergencyRelationship(e.target.value)}
-                  style={inputStyle}
-                  placeholder="e.g., Spouse, Parent, Friend"
-                  required
-                />
-              </div>
             </div>
-          </div>
 
-          {/* PAR-Q Health Screening */}
-          <div style={sectionStyle}>
-            <h2 style={{ marginBottom: '8px', fontSize: '20px' }}>Health Screening (PAR-Q)</h2>
-            <p style={{ fontSize: '14px', color: '#6c757d', marginBottom: '16px' }}>
-              Please answer YES or NO to the following questions:
-            </p>
-
-            <label style={checkboxLabelStyle}>
-              <input
-                type="checkbox"
-                checked={parq1}
-                onChange={(e) => setParq1(e.target.checked)}
-              />
-              <span>Has your doctor ever said that you have a heart condition and that you should only perform physical activity recommended by a doctor?</span>
-            </label>
-
-            <label style={checkboxLabelStyle}>
-              <input
-                type="checkbox"
-                checked={parq2}
-                onChange={(e) => setParq2(e.target.checked)}
-              />
-              <span>Do you feel pain in your chest when you perform physical activity?</span>
-            </label>
-
-            <label style={checkboxLabelStyle}>
-              <input
-                type="checkbox"
-                checked={parq3}
-                onChange={(e) => setParq3(e.target.checked)}
-              />
-              <span>In the past month, have you had chest pain when you were not performing any physical activity?</span>
-            </label>
-
-            <label style={checkboxLabelStyle}>
-              <input
-                type="checkbox"
-                checked={parq4}
-                onChange={(e) => setParq4(e.target.checked)}
-              />
-              <span>Do you lose your balance because of dizziness or do you ever lose consciousness?</span>
-            </label>
-
-            <label style={checkboxLabelStyle}>
-              <input
-                type="checkbox"
-                checked={parq5}
-                onChange={(e) => setParq5(e.target.checked)}
-              />
-              <span>Do you have a bone or joint problem that could be made worse by a change in your physical activity?</span>
-            </label>
-
-            <label style={checkboxLabelStyle}>
-              <input
-                type="checkbox"
-                checked={parq6}
-                onChange={(e) => setParq6(e.target.checked)}
-              />
-              <span>Is your doctor currently prescribing medication for your blood pressure or heart condition?</span>
-            </label>
-
-            <label style={checkboxLabelStyle}>
-              <input
-                type="checkbox"
-                checked={parq7}
-                onChange={(e) => setParq7(e.target.checked)}
-              />
-              <span>Are you pregnant or have you given birth within the last 6 months?</span>
-            </label>
-
-            {(parq1 || parq2 || parq3 || parq4 || parq5 || parq6 || parq7) && (
-              <div style={{ marginTop: '16px', padding: '12px', backgroundColor: '#fff3cd', border: '1px solid #ffc107', borderRadius: '4px' }}>
-                <label style={labelStyle}>Have you obtained physician clearance to exercise? *</label>
-                <select
-                  value={physicianClearance}
-                  onChange={(e) => setPhysicianClearance(e.target.value)}
-                  style={inputStyle}
-                  required
-                >
-                  <option value="no">No</option>
-                  <option value="yes">Yes</option>
-                </select>
-              </div>
-            )}
-          </div>
-
-          {/* Health Information */}
-          <div style={sectionStyle}>
-            <h2 style={{ marginBottom: '16px', fontSize: '20px' }}>Health Information</h2>
-
-            <label style={labelStyle}>Current Medications</label>
-            <textarea
-              value={medications}
-              onChange={(e) => setMedications(e.target.value)}
-              style={{ ...inputStyle, minHeight: '80px' }}
-              placeholder="List any medications you are currently taking, or write 'None'"
-            />
-
-            <label style={labelStyle}>Injuries or Pain</label>
-            <textarea
-              value={injuries}
-              onChange={(e) => setInjuries(e.target.value)}
-              style={{ ...inputStyle, minHeight: '80px' }}
-              placeholder="Any current or past injuries, chronic pain, or physical limitations"
-            />
-
-            <label style={labelStyle}>Medical Conditions</label>
-            <textarea
-              value={medicalConditions}
-              onChange={(e) => setMedicalConditions(e.target.value)}
-              style={{ ...inputStyle, minHeight: '80px' }}
-              placeholder="Any medical conditions we should be aware of (diabetes, asthma, etc.)"
-            />
-
-            <label style={labelStyle}>Past Surgeries</label>
-            <textarea
-              value={surgeries}
-              onChange={(e) => setSurgeries(e.target.value)}
-              style={{ ...inputStyle, minHeight: '80px' }}
-              placeholder="List any past surgeries and approximate dates"
-            />
-          </div>
-
-          {/* Lifestyle */}
-          <div style={sectionStyle}>
-            <h2 style={{ marginBottom: '16px', fontSize: '20px' }}>Lifestyle</h2>
-
-            <label style={labelStyle}>Occupation</label>
+            <label style={labelStyle}>Alt. Phone/Contact</label>
             <input
               type="text"
-              value={occupation}
-              onChange={(e) => setOccupation(e.target.value)}
+              value={altContact}
+              onChange={(e) => setAltContact(e.target.value)}
               style={inputStyle}
-              placeholder="What do you do for work?"
+              placeholder="Alternative phone number or contact person"
             />
 
-            <label style={labelStyle}>Stress Level</label>
-            <select
-              value={stressLevel}
-              onChange={(e) => setStressLevel(e.target.value)}
+            <label style={labelStyle}>How did you hear about me?</label>
+            <input
+              type="text"
+              value={referralSource}
+              onChange={(e) => setReferralSource(e.target.value)}
               style={inputStyle}
-            >
-              <option value="low">Low</option>
-              <option value="moderate">Moderate</option>
-              <option value="high">High</option>
-            </select>
+              placeholder="Referral, social media, website, etc."
+            />
+          </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <div>
-                <label style={labelStyle}>Average Sleep Hours/Night</label>
+          {/* LIFESTYLE QUESTIONNAIRE */}
+          <div style={sectionStyle}>
+            <h2 style={{ marginBottom: '16px', fontSize: '20px' }}>Lifestyle Questionnaire</h2>
+
+            <label style={labelStyle}>Do you smoke?</label>
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'inline-flex', alignItems: 'center', marginRight: '24px' }}>
                 <input
-                  type="number"
-                  value={sleepHours}
-                  onChange={(e) => setSleepHours(e.target.value)}
-                  style={inputStyle}
-                  min="0"
-                  max="24"
-                  step="0.5"
-                  placeholder="e.g., 7.5"
+                  type="radio"
+                  value="no"
+                  checked={smoker === 'no'}
+                  onChange={(e) => setSmoker(e.target.value)}
+                  style={{ marginRight: '8px' }}
                 />
-              </div>
-              <div>
-                <label style={labelStyle}>Sleep Quality</label>
-                <select
-                  value={sleepQuality}
-                  onChange={(e) => setSleepQuality(e.target.value)}
-                  style={inputStyle}
-                >
-                  <option value="poor">Poor</option>
-                  <option value="fair">Fair</option>
-                  <option value="good">Good</option>
-                  <option value="excellent">Excellent</option>
-                </select>
-              </div>
+                No
+              </label>
+              <label style={{ display: 'inline-flex', alignItems: 'center' }}>
+                <input
+                  type="radio"
+                  value="yes"
+                  checked={smoker === 'yes'}
+                  onChange={(e) => setSmoker(e.target.value)}
+                  style={{ marginRight: '8px' }}
+                />
+                Yes
+              </label>
             </div>
 
-            <label style={labelStyle}>Tobacco Use</label>
-            <select
-              value={tobaccoUse}
-              onChange={(e) => setTobaccoUse(e.target.value)}
-              style={inputStyle}
-            >
-              <option value="no">No</option>
-              <option value="yes">Yes</option>
-              <option value="former">Former User</option>
-            </select>
-
-            <label style={labelStyle}>Alcohol Use</label>
-            <select
-              value={alcoholUse}
-              onChange={(e) => setAlcoholUse(e.target.value)}
-              style={inputStyle}
-            >
-              <option value="none">None</option>
-              <option value="occasional">Occasional (1-3 drinks/week)</option>
-              <option value="moderate">Moderate (4-7 drinks/week)</option>
-              <option value="frequent">Frequent (8+ drinks/week)</option>
-            </select>
-          </div>
-
-          {/* Exercise History */}
-          <div style={sectionStyle}>
-            <h2 style={{ marginBottom: '16px', fontSize: '20px' }}>Exercise History</h2>
-
-            <label style={labelStyle}>Are you currently exercising regularly?</label>
-            <select
-              value={currentlyExercising}
-              onChange={(e) => setCurrentlyExercising(e.target.value)}
-              style={inputStyle}
-            >
-              <option value="no">No</option>
-              <option value="yes">Yes</option>
-            </select>
-
-            {currentlyExercising === 'yes' && (
-              <>
-                <label style={labelStyle}>How many days per week?</label>
+            {smoker === 'yes' && (
+              <div style={{ marginBottom: '16px' }}>
+                <label style={labelStyle}>How many per day?</label>
                 <input
-                  type="number"
-                  value={exerciseFrequency}
-                  onChange={(e) => setExerciseFrequency(e.target.value)}
+                  type="text"
+                  value={smokesPerDay}
+                  onChange={(e) => setSmokesPerDay(e.target.value)}
                   style={inputStyle}
-                  min="1"
-                  max="7"
-                  placeholder="e.g., 3"
                 />
-
-                <label style={labelStyle}>Types of exercise (select all that apply):</label>
-                <div style={{ marginBottom: '16px' }}>
-                  {['Cardio', 'Strength Training', 'Yoga/Pilates', 'Sports', 'Walking/Running', 'Cycling', 'Swimming', 'Group Classes'].map(type => (
-                    <label key={type} style={checkboxLabelStyle}>
-                      <input
-                        type="checkbox"
-                        checked={exerciseTypes.includes(type)}
-                        onChange={() => handleExerciseTypeToggle(type)}
-                      />
-                      <span>{type}</span>
-                    </label>
-                  ))}
-                </div>
-              </>
+              </div>
             )}
 
-            <label style={labelStyle}>Exercise History</label>
-            <textarea
-              value={exerciseHistory}
-              onChange={(e) => setExerciseHistory(e.target.value)}
-              style={{ ...inputStyle, minHeight: '80px' }}
-              placeholder="Tell us about your past experience with exercise and fitness programs"
+            <label style={labelStyle}>If former smoker, quit date</label>
+            <input
+              type="text"
+              value={formerSmokerQuitDate}
+              onChange={(e) => setFormerSmokerQuitDate(e.target.value)}
+              style={inputStyle}
+              placeholder="e.g., January 2020"
+            />
+
+            <label style={labelStyle}>Do you drink alcohol?</label>
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'inline-flex', alignItems: 'center', marginRight: '24px' }}>
+                <input
+                  type="radio"
+                  value="no"
+                  checked={drinksAlcohol === 'no'}
+                  onChange={(e) => setDrinksAlcohol(e.target.value)}
+                  style={{ marginRight: '8px' }}
+                />
+                No
+              </label>
+              <label style={{ display: 'inline-flex', alignItems: 'center' }}>
+                <input
+                  type="radio"
+                  value="yes"
+                  checked={drinksAlcohol === 'yes'}
+                  onChange={(e) => setDrinksAlcohol(e.target.value)}
+                  style={{ marginRight: '8px' }}
+                />
+                Yes
+              </label>
+            </div>
+
+            {drinksAlcohol === 'yes' && (
+              <div style={{ marginBottom: '16px' }}>
+                <label style={labelStyle}>How much per week?</label>
+                <input
+                  type="text"
+                  value={alcoholPerWeek}
+                  onChange={(e) => setAlcoholPerWeek(e.target.value)}
+                  style={inputStyle}
+                  placeholder="e.g., 2-3 drinks"
+                />
+              </div>
+            )}
+
+            <label style={labelStyle}>Are you currently taking a multi-vitamin or any other supplements?</label>
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'inline-flex', alignItems: 'center', marginRight: '24px' }}>
+                <input
+                  type="radio"
+                  value="no"
+                  checked={takesSupplements === 'no'}
+                  onChange={(e) => setTakesSupplements(e.target.value)}
+                  style={{ marginRight: '8px' }}
+                />
+                No
+              </label>
+              <label style={{ display: 'inline-flex', alignItems: 'center' }}>
+                <input
+                  type="radio"
+                  value="yes"
+                  checked={takesSupplements === 'yes'}
+                  onChange={(e) => setTakesSupplements(e.target.value)}
+                  style={{ marginRight: '8px' }}
+                />
+                Yes
+              </label>
+            </div>
+
+            {takesSupplements === 'yes' && (
+              <div style={{ marginBottom: '16px' }}>
+                <label style={labelStyle}>Please list</label>
+                <textarea
+                  value={supplementsList}
+                  onChange={(e) => setSupplementsList(e.target.value)}
+                  style={{ ...inputStyle, minHeight: '80px' }}
+                />
+              </div>
+            )}
+
+            <label style={labelStyle}>How many hours do you regularly sleep at night?</label>
+            <input
+              type="text"
+              value={sleepHours}
+              onChange={(e) => setSleepHours(e.target.value)}
+              style={inputStyle}
+              placeholder="e.g., 7-8 hours"
             />
           </div>
 
-          {/* Goals */}
+          {/* GOALS / PROGRAM INFO */}
           <div style={sectionStyle}>
-            <h2 style={{ marginBottom: '16px', fontSize: '20px' }}>Fitness Goals</h2>
+            <h2 style={{ marginBottom: '16px', fontSize: '20px' }}>Goals / Program Info</h2>
 
-            <label style={labelStyle}>Primary Goals (select all that apply):</label>
+            <label style={labelStyle}>List three things you would like to improve pertaining to your health/fitness:</label>
+
+            <label style={{ ...labelStyle, fontWeight: 400 }}>a)</label>
+            <input
+              type="text"
+              value={healthGoal1}
+              onChange={(e) => setHealthGoal1(e.target.value)}
+              style={inputStyle}
+            />
+
+            <label style={{ ...labelStyle, fontWeight: 400 }}>b)</label>
+            <input
+              type="text"
+              value={healthGoal2}
+              onChange={(e) => setHealthGoal2(e.target.value)}
+              style={inputStyle}
+            />
+
+            <label style={{ ...labelStyle, fontWeight: 400 }}>c)</label>
+            <input
+              type="text"
+              value={healthGoal3}
+              onChange={(e) => setHealthGoal3(e.target.value)}
+              style={inputStyle}
+            />
+
+            <label style={labelStyle}>How important is it for you to achieve these?</label>
             <div style={{ marginBottom: '16px' }}>
-              {[
-                'Weight Loss',
-                'Muscle Gain',
-                'Strength',
-                'Endurance',
-                'Flexibility',
-                'Athletic Performance',
-                'General Health',
-                'Stress Relief',
-                'Injury Rehab'
-              ].map(goal => (
-                <label key={goal} style={checkboxLabelStyle}>
+              <label style={{ display: 'block', marginBottom: '8px' }}>
+                <input
+                  type="radio"
+                  value="not-important"
+                  checked={goalsImportance === 'not-important'}
+                  onChange={(e) => setGoalsImportance(e.target.value)}
+                  style={{ marginRight: '8px' }}
+                />
+                Not important
+              </label>
+              <label style={{ display: 'block', marginBottom: '8px' }}>
+                <input
+                  type="radio"
+                  value="semi-important"
+                  checked={goalsImportance === 'semi-important'}
+                  onChange={(e) => setGoalsImportance(e.target.value)}
+                  style={{ marginRight: '8px' }}
+                />
+                Semi-important
+              </label>
+              <label style={{ display: 'block', marginBottom: '8px' }}>
+                <input
+                  type="radio"
+                  value="very-important"
+                  checked={goalsImportance === 'very-important'}
+                  onChange={(e) => setGoalsImportance(e.target.value)}
+                  style={{ marginRight: '8px' }}
+                />
+                Very important
+              </label>
+            </div>
+
+            <label style={labelStyle}>What do you think is the most important thing your trainer can do for you?</label>
+            <textarea
+              value={trainerImportance}
+              onChange={(e) => setTrainerImportance(e.target.value)}
+              style={{ ...inputStyle, minHeight: '80px' }}
+            />
+
+            <label style={labelStyle}>List potential obstacles/actions/behaviors/activities that could interfere:</label>
+
+            <label style={{ ...labelStyle, fontWeight: 400 }}>a)</label>
+            <input
+              type="text"
+              value={obstacle1}
+              onChange={(e) => setObstacle1(e.target.value)}
+              style={inputStyle}
+            />
+
+            <label style={{ ...labelStyle, fontWeight: 400 }}>b)</label>
+            <input
+              type="text"
+              value={obstacle2}
+              onChange={(e) => setObstacle2(e.target.value)}
+              style={inputStyle}
+            />
+
+            <label style={{ ...labelStyle, fontWeight: 400 }}>c)</label>
+            <input
+              type="text"
+              value={obstacle3}
+              onChange={(e) => setObstacle3(e.target.value)}
+              style={inputStyle}
+            />
+          </div>
+
+          {/* NUTRITION */}
+          <div style={sectionStyle}>
+            <h2 style={{ marginBottom: '16px', fontSize: '20px' }}>Nutrition</h2>
+
+            <label style={labelStyle}>On a scale from 1-5, rate your nutrition (1=poor, 5=excellent)</label>
+            <div style={{ marginBottom: '16px' }}>
+              {[1, 2, 3, 4, 5].map(num => (
+                <label key={num} style={{ display: 'inline-flex', alignItems: 'center', marginRight: '16px' }}>
                   <input
-                    type="checkbox"
-                    checked={primaryGoals.includes(goal)}
-                    onChange={() => handleGoalToggle(goal)}
+                    type="radio"
+                    value={num.toString()}
+                    checked={nutritionRating === num.toString()}
+                    onChange={(e) => setNutritionRating(e.target.value)}
+                    style={{ marginRight: '8px' }}
                   />
-                  <span>{goal}</span>
+                  {num}
                 </label>
               ))}
             </div>
 
-            <label style={labelStyle}>Specific Goals</label>
-            <textarea
-              value={specificGoals}
-              onChange={(e) => setSpecificGoals(e.target.value)}
-              style={{ ...inputStyle, minHeight: '100px' }}
-              placeholder="Describe your specific fitness goals in detail (e.g., lose 20 lbs, run a 5K, bench press 200 lbs)"
-            />
-
-            <label style={labelStyle}>Timeline</label>
+            <label style={labelStyle}>How many times throughout the day do you eat?</label>
             <input
               type="text"
-              value={timeline}
-              onChange={(e) => setTimeline(e.target.value)}
-              style={inputStyle}
-              placeholder="When would you like to achieve your goals? (e.g., 3 months, 6 months, 1 year)"
-            />
-
-            <label style={labelStyle}>Obstacles or Challenges</label>
-            <textarea
-              value={obstacles}
-              onChange={(e) => setObstacles(e.target.value)}
-              style={{ ...inputStyle, minHeight: '80px' }}
-              placeholder="What obstacles have prevented you from reaching your fitness goals in the past?"
-            />
-          </div>
-
-          {/* Nutrition */}
-          <div style={sectionStyle}>
-            <h2 style={{ marginBottom: '16px', fontSize: '20px' }}>Nutrition</h2>
-
-            <label style={labelStyle}>Meals Per Day</label>
-            <input
-              type="number"
               value={mealsPerDay}
               onChange={(e) => setMealsPerDay(e.target.value)}
               style={inputStyle}
-              min="1"
-              max="10"
-              placeholder="How many meals/snacks do you eat per day?"
+              placeholder="e.g., 3 meals, 2 snacks"
             />
 
-            <label style={labelStyle}>Daily Water Intake</label>
+            <label style={labelStyle}>Do you skip meals?</label>
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'inline-flex', alignItems: 'center', marginRight: '24px' }}>
+                <input
+                  type="radio"
+                  value="no"
+                  checked={skipMeals === 'no'}
+                  onChange={(e) => setSkipMeals(e.target.value)}
+                  style={{ marginRight: '8px' }}
+                />
+                No
+              </label>
+              <label style={{ display: 'inline-flex', alignItems: 'center' }}>
+                <input
+                  type="radio"
+                  value="yes"
+                  checked={skipMeals === 'yes'}
+                  onChange={(e) => setSkipMeals(e.target.value)}
+                  style={{ marginRight: '8px' }}
+                />
+                Yes
+              </label>
+            </div>
+
+            <label style={labelStyle}>What activities do you engage in while eating (TV, reading, etc)?</label>
             <input
               type="text"
-              value={waterIntake}
-              onChange={(e) => setWaterIntake(e.target.value)}
+              value={eatingActivities}
+              onChange={(e) => setEatingActivities(e.target.value)}
               style={inputStyle}
-              placeholder="e.g., 8 glasses, 64 oz, 2 liters"
             />
 
-            <label style={labelStyle}>Dietary Restrictions or Preferences</label>
-            <textarea
-              value={dietaryRestrictions}
-              onChange={(e) => setDietaryRestrictions(e.target.value)}
-              style={{ ...inputStyle, minHeight: '80px' }}
-              placeholder="Vegetarian, vegan, gluten-free, allergies, etc."
+            <label style={labelStyle}>How many glasses of water do you consume daily?</label>
+            <input
+              type="text"
+              value={waterGlasses}
+              onChange={(e) => setWaterGlasses(e.target.value)}
+              style={inputStyle}
+              placeholder="e.g., 8 glasses"
             />
 
-            <label style={labelStyle}>Nutrition Challenges</label>
+            <label style={labelStyle}>What kinds of food do you regularly eat?</label>
             <textarea
-              value={nutritionChallenges}
-              onChange={(e) => setNutritionChallenges(e.target.value)}
+              value={regularFoods}
+              onChange={(e) => setRegularFoods(e.target.value)}
               style={{ ...inputStyle, minHeight: '80px' }}
-              placeholder="What are your biggest challenges with nutrition? (e.g., eating out, late-night snacking, meal prep)"
+              placeholder="Describe your typical diet"
+            />
+
+            <label style={labelStyle}>Do you know how many calories you consume in a day?</label>
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'inline-flex', alignItems: 'center', marginRight: '24px' }}>
+                <input
+                  type="radio"
+                  value="no"
+                  checked={knowsCalories === 'no'}
+                  onChange={(e) => setKnowsCalories(e.target.value)}
+                  style={{ marginRight: '8px' }}
+                />
+                No
+              </label>
+              <label style={{ display: 'inline-flex', alignItems: 'center' }}>
+                <input
+                  type="radio"
+                  value="yes"
+                  checked={knowsCalories === 'yes'}
+                  onChange={(e) => setKnowsCalories(e.target.value)}
+                  style={{ marginRight: '8px' }}
+                />
+                Yes
+              </label>
+            </div>
+
+            {knowsCalories === 'yes' && (
+              <div style={{ marginBottom: '16px' }}>
+                <label style={labelStyle}>How many?</label>
+                <input
+                  type="text"
+                  value={dailyCalories}
+                  onChange={(e) => setDailyCalories(e.target.value)}
+                  style={inputStyle}
+                  placeholder="e.g., 2000 calories"
+                />
+              </div>
+            )}
+
+            <label style={labelStyle}>List three things you would like to improve pertaining to your nutrition:</label>
+
+            <label style={{ ...labelStyle, fontWeight: 400 }}>a)</label>
+            <input
+              type="text"
+              value={nutritionGoal1}
+              onChange={(e) => setNutritionGoal1(e.target.value)}
+              style={inputStyle}
+            />
+
+            <label style={{ ...labelStyle, fontWeight: 400 }}>b)</label>
+            <input
+              type="text"
+              value={nutritionGoal2}
+              onChange={(e) => setNutritionGoal2(e.target.value)}
+              style={inputStyle}
+            />
+
+            <label style={{ ...labelStyle, fontWeight: 400 }}>c)</label>
+            <input
+              type="text"
+              value={nutritionGoal3}
+              onChange={(e) => setNutritionGoal3(e.target.value)}
+              style={inputStyle}
+            />
+
+            <label style={labelStyle}>Please list anything else that you may feel is a concern or is relevant</label>
+            <textarea
+              value={additionalConcerns}
+              onChange={(e) => setAdditionalConcerns(e.target.value)}
+              style={{ ...inputStyle, minHeight: '100px' }}
+              placeholder="Any additional information about your health, fitness, or nutrition"
             />
           </div>
 
-          {/* Submit */}
-          <div style={{
-            marginTop: '24px',
-            padding: '16px',
-            backgroundColor: '#fff3cd',
-            border: '1px solid #ffc107',
-            borderRadius: '4px',
-            marginBottom: '16px'
-          }}>
-            <p style={{ margin: 0, fontSize: '14px' }}>
-              <strong>By submitting this form, you certify that the information provided is accurate and complete to the best of your knowledge.</strong>
+          {/* PAR-Q (HEALTH SCREENING) */}
+          <div style={sectionStyle}>
+            <h2 style={{ marginBottom: '16px', fontSize: '20px' }}>PAR-Q (Health Screening)</h2>
+            <p style={{ fontSize: '14px', color: '#6c757d', marginBottom: '16px' }}>
+              Please answer YES or NO to the following questions:
             </p>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={labelStyle}>1) Has your doctor ever said you have a heart condition and that you should only do physical activity recommended by a doctor? *</label>
+              <div>
+                <label style={{ display: 'inline-flex', alignItems: 'center', marginRight: '24px' }}>
+                  <input
+                    type="radio"
+                    value="no"
+                    checked={parq1 === 'no'}
+                    onChange={(e) => setParq1(e.target.value)}
+                    style={{ marginRight: '8px' }}
+                    required
+                  />
+                  No
+                </label>
+                <label style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  <input
+                    type="radio"
+                    value="yes"
+                    checked={parq1 === 'yes'}
+                    onChange={(e) => setParq1(e.target.value)}
+                    style={{ marginRight: '8px' }}
+                    required
+                  />
+                  Yes
+                </label>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={labelStyle}>2) Do you feel pain in your chest when you perform physical activity? *</label>
+              <div>
+                <label style={{ display: 'inline-flex', alignItems: 'center', marginRight: '24px' }}>
+                  <input
+                    type="radio"
+                    value="no"
+                    checked={parq2 === 'no'}
+                    onChange={(e) => setParq2(e.target.value)}
+                    style={{ marginRight: '8px' }}
+                    required
+                  />
+                  No
+                </label>
+                <label style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  <input
+                    type="radio"
+                    value="yes"
+                    checked={parq2 === 'yes'}
+                    onChange={(e) => setParq2(e.target.value)}
+                    style={{ marginRight: '8px' }}
+                    required
+                  />
+                  Yes
+                </label>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={labelStyle}>3) In the past month, have you had chest pain when you were not performing any physical activity? *</label>
+              <div>
+                <label style={{ display: 'inline-flex', alignItems: 'center', marginRight: '24px' }}>
+                  <input
+                    type="radio"
+                    value="no"
+                    checked={parq3 === 'no'}
+                    onChange={(e) => setParq3(e.target.value)}
+                    style={{ marginRight: '8px' }}
+                    required
+                  />
+                  No
+                </label>
+                <label style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  <input
+                    type="radio"
+                    value="yes"
+                    checked={parq3 === 'yes'}
+                    onChange={(e) => setParq3(e.target.value)}
+                    style={{ marginRight: '8px' }}
+                    required
+                  />
+                  Yes
+                </label>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={labelStyle}>4) Do you lose your balance because of dizziness, or do you ever lose consciousness? *</label>
+              <div>
+                <label style={{ display: 'inline-flex', alignItems: 'center', marginRight: '24px' }}>
+                  <input
+                    type="radio"
+                    value="no"
+                    checked={parq4 === 'no'}
+                    onChange={(e) => setParq4(e.target.value)}
+                    style={{ marginRight: '8px' }}
+                    required
+                  />
+                  No
+                </label>
+                <label style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  <input
+                    type="radio"
+                    value="yes"
+                    checked={parq4 === 'yes'}
+                    onChange={(e) => setParq4(e.target.value)}
+                    style={{ marginRight: '8px' }}
+                    required
+                  />
+                  Yes
+                </label>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={labelStyle}>5) Do you have a bone or joint problem that could be worsened by a change in your physical activity? *</label>
+              <div>
+                <label style={{ display: 'inline-flex', alignItems: 'center', marginRight: '24px' }}>
+                  <input
+                    type="radio"
+                    value="no"
+                    checked={parq5 === 'no'}
+                    onChange={(e) => setParq5(e.target.value)}
+                    style={{ marginRight: '8px' }}
+                    required
+                  />
+                  No
+                </label>
+                <label style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  <input
+                    type="radio"
+                    value="yes"
+                    checked={parq5 === 'yes'}
+                    onChange={(e) => setParq5(e.target.value)}
+                    style={{ marginRight: '8px' }}
+                    required
+                  />
+                  Yes
+                </label>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={labelStyle}>6) Is your doctor currently prescribing any medication for your blood pressure or a heart condition? *</label>
+              <div>
+                <label style={{ display: 'inline-flex', alignItems: 'center', marginRight: '24px' }}>
+                  <input
+                    type="radio"
+                    value="no"
+                    checked={parq6 === 'no'}
+                    onChange={(e) => setParq6(e.target.value)}
+                    style={{ marginRight: '8px' }}
+                    required
+                  />
+                  No
+                </label>
+                <label style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  <input
+                    type="radio"
+                    value="yes"
+                    checked={parq6 === 'yes'}
+                    onChange={(e) => setParq6(e.target.value)}
+                    style={{ marginRight: '8px' }}
+                    required
+                  />
+                  Yes
+                </label>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={labelStyle}>7) Do you know of any other reason why you should not engage in physical activity? *</label>
+              <div>
+                <label style={{ display: 'inline-flex', alignItems: 'center', marginRight: '24px' }}>
+                  <input
+                    type="radio"
+                    value="no"
+                    checked={parq7 === 'no'}
+                    onChange={(e) => setParq7(e.target.value)}
+                    style={{ marginRight: '8px' }}
+                    required
+                  />
+                  No
+                </label>
+                <label style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  <input
+                    type="radio"
+                    value="yes"
+                    checked={parq7 === 'yes'}
+                    onChange={(e) => setParq7(e.target.value)}
+                    style={{ marginRight: '8px' }}
+                    required
+                  />
+                  Yes
+                </label>
+              </div>
+            </div>
+
+            {[parq1, parq2, parq3, parq4, parq5, parq6, parq7].some(q => q === 'yes') && (
+              <div style={{ marginTop: '24px', padding: '16px', backgroundColor: '#fff3cd', border: '1px solid #ffc107', borderRadius: '4px' }}>
+                <label style={labelStyle}>If you answered Yes to any of the above questions, please provide details: *</label>
+                <textarea
+                  value={parqDetails}
+                  onChange={(e) => setParqDetails(e.target.value)}
+                  style={{ ...inputStyle, minHeight: '100px' }}
+                  placeholder="Please explain which question(s) you answered yes to and provide relevant details"
+                  required
+                />
+                <p style={{ fontSize: '14px', color: '#856404', marginTop: '8px', marginBottom: 0 }}>
+                  <strong>PLEASE NOTE:</strong> If you answered YES to one or more of the above questions, please consult with your physician before engaging in physical activity. Inform your physician which questions you answered YES to and follow their guidance.
+                </p>
+              </div>
+            )}
           </div>
 
+          {/* CERTIFICATION + SIGNATURE */}
+          <div style={sectionStyle}>
+            <h2 style={{ marginBottom: '16px', fontSize: '20px' }}>Certification and Signature</h2>
+
+            <div style={{ padding: '16px', backgroundColor: '#e7f3ff', border: '1px solid #b3d9ff', borderRadius: '4px', marginBottom: '16px' }}>
+              <p style={{ fontSize: '14px', marginBottom: '12px' }}>
+                <strong>Certification Statement:</strong>
+              </p>
+              <p style={{ fontSize: '14px', marginBottom: 0 }}>
+                I certify that the information provided in this intake form is accurate and complete to the best of my knowledge. I understand that this information will be used to help design an appropriate fitness program for me, and I agree to inform my trainer of any changes to my health status.
+              </p>
+            </div>
+
+            <label style={{ display: 'flex', alignItems: 'center', marginBottom: '16px', cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={certificationAgreed}
+                onChange={(e) => setCertificationAgreed(e.target.checked)}
+                style={{ marginRight: '8px', width: '18px', height: '18px' }}
+                required
+              />
+              <span style={{ fontSize: '14px', fontWeight: 600 }}>I certify that the information above is accurate *</span>
+            </label>
+
+            <label style={labelStyle}>Signature (type your full name) *</label>
+            <input
+              type="text"
+              value={signature}
+              onChange={(e) => setSignature(e.target.value)}
+              style={{ ...inputStyle, fontFamily: 'cursive', fontSize: '18px' }}
+              placeholder="Type your full legal name"
+              required
+            />
+
+            <label style={labelStyle}>Date *</label>
+            <input
+              type="date"
+              value={signatureDate}
+              onChange={(e) => setSignatureDate(e.target.value)}
+              style={inputStyle}
+              required
+            />
+          </div>
+
+          {/* SUBMIT */}
           <button
             type="submit"
             disabled={submitting}
             style={{
               width: '100%',
-              padding: '14px',
+              padding: '16px',
               fontSize: '18px',
               fontWeight: 'bold',
               backgroundColor: submitting ? '#6c757d' : '#28a745',
               color: 'white',
               border: 'none',
               borderRadius: '4px',
-              cursor: submitting ? 'not-allowed' : 'pointer'
+              cursor: submitting ? 'not-allowed' : 'pointer',
+              marginTop: '8px'
             }}
           >
             {submitting ? 'Submitting...' : alreadySubmitted ? 'Update Intake Form' : 'Submit Intake Form'}
