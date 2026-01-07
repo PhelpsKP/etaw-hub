@@ -68,7 +68,7 @@ export function Waiver() {
     setLoading(false);
 
     if (data.signed) {
-      navigate("/app", { replace: true });
+      navigate("/app/intake", { replace: true });
     }
   }
 
@@ -127,7 +127,7 @@ export function Waiver() {
       return;
     }
 
-    navigate("/app", { replace: true });
+    navigate("/app/intake", { replace: true });
   }
 
   if (loading) return <div style={{ padding: 24 }}>Loading waiver...</div>;

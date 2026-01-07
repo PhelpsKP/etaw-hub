@@ -20,6 +20,7 @@ import { ClientRewards } from './pages/ClientRewards';
 import { ClientMembership } from './pages/ClientMembership';
 import { Waiver } from "./pages/Waiver";
 import { WaiverGate } from "./components/WaiverGate";
+import { OnboardingGate } from "./components/OnboardingGate";
 
 function App() {
   return (
@@ -51,75 +52,78 @@ function App() {
             <Route
               path="/app/book"
               element={
-                <WaiverGate>
+                <OnboardingGate>
                   <ProtectedRoute>
                     <Book />
                   </ProtectedRoute>
-                </WaiverGate>
+                </OnboardingGate>
               }
             />
 
             <Route
               path="/app/workouts"
               element={
-                <WaiverGate>
+                <OnboardingGate>
                   <ProtectedRoute>
                     <ClientWorkouts />
                   </ProtectedRoute>
-                </WaiverGate>
+                </OnboardingGate>
               }
             />
 
+            {/* Intake needs WaiverGate but NOT OnboardingGate since it's part of onboarding */}
             <Route
               path="/app/intake"
               element={
-                <ProtectedRoute>
-                  <ClientIntake />
-                </ProtectedRoute>
+                <WaiverGate>
+                  <ProtectedRoute>
+                    <ClientIntake />
+                  </ProtectedRoute>
+                </WaiverGate>
               }
             />
 
             <Route
               path="/app/credits"
               element={
-                <WaiverGate>
+                <OnboardingGate>
                   <ProtectedRoute>
                     <ClientCredits />
                   </ProtectedRoute>
-                </WaiverGate>
+                </OnboardingGate>
               }
             />
 
             <Route
               path="/app/rewards"
               element={
-                <WaiverGate>
+                <OnboardingGate>
                   <ProtectedRoute>
                     <ClientRewards />
                   </ProtectedRoute>
-                </WaiverGate>
+                </OnboardingGate>
               }
             />
 
             <Route
               path="/app/membership"
               element={
-                <WaiverGate>
+                <OnboardingGate>
                   <ProtectedRoute>
                     <ClientMembership />
                   </ProtectedRoute>
-                </WaiverGate>
+                </OnboardingGate>
               }
             />
 
             <Route
               path="/app/admin"
               element={
-                <WaiverGate>
+                <OnboardingGate>
                   <ProtectedRoute requireAdmin={true}>
                     <Admin />
                   </ProtectedRoute>
-                </WaiverGate>
+                </OnboardingGate>
               }
             />
           </Route>

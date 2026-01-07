@@ -1096,7 +1096,18 @@ export default {
           return withCors(json({ error: "Active waiver signature required" }, 403));
         }
 
-        // 2. Get session details
+        // 2. Check if user has completed intake form
+        const intakeSubmission = await env.DB.prepare(
+          "SELECT id FROM intake_submissions WHERE user_id = ? AND form_type = 'basic'"
+        )
+          .bind(auth.uid)
+          .first();
+
+        if (!intakeSubmission) {
+          return withCors(json({ error: "Intake form completion required" }, 403));
+        }
+
+        // 3. Get session details
         const session = await env.DB.prepare(
           "SELECT id, starts_at, ends_at, capacity FROM sessions WHERE id = ?"
         )
@@ -1107,7 +1118,7 @@ export default {
           return withCors(json({ error: "Session not found" }, 404));
         }
 
-        // 3. Check 8-hour booking window
+        // 4. Check 8-hour booking window
         const sessionStart = new Date(session.starts_at as string);
         const now = new Date();
         const eightHoursBeforeStart = new Date(sessionStart.getTime() - 8 * 60 * 60 * 1000);
@@ -1116,7 +1127,7 @@ export default {
           return withCors(json({ error: "Booking window closed (must book at least 8 hours before session)" }, 400));
         }
 
-        // 4. Check if user already has an active booking for this session
+        // 5. Check if user already has an active booking for this session
         const existingBooking = await env.DB.prepare(
           "SELECT id FROM bookings WHERE session_id = ? AND user_id = ? AND status = 'booked'"
         )
@@ -1127,7 +1138,7 @@ export default {
           return withCors(json({ error: "You already have a booking for this session" }, 400));
         }
 
-        // 5. Check session capacity
+        // 6. Check session capacity
         const bookedCount = await env.DB.prepare(
           "SELECT COUNT(*) as count FROM bookings WHERE session_id = ? AND status = 'booked'"
         )
@@ -1138,7 +1149,7 @@ export default {
           return withCors(json({ error: "Session is full" }, 400));
         }
 
-        // 6. Check eligibility (unlimited membership OR credits)
+        // 7. Check eligibility (unlimited membership OR credits)
         const membership = await env.DB.prepare(
           `SELECT id, unlimited, ends_at FROM memberships
            WHERE user_id = ? AND plan = 'circuit' AND is_active = 1
@@ -1205,7 +1216,7 @@ export default {
           usedCreditTypeId = creditTypeToUse;
         }
 
-        // 7. Create booking
+        // 8. Create booking
         const bookingId = crypto.randomUUID();
         await env.DB.prepare(
           "INSERT INTO bookings (id, session_id, user_id, status, credit_type_id) VALUES (?, ?, ?, 'booked', ?)"
