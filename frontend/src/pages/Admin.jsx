@@ -1183,6 +1183,7 @@ function ClientsTab() {
   const [selectedClient, setSelectedClient] = useState(null);
   const [intakeData, setIntakeData] = useState(null);
   const [creditsData, setCreditsData] = useState(null);
+  const [waiverData, setWaiverData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -1223,6 +1224,7 @@ function ClientsTab() {
     setSelectedClient(client);
     setIntakeData(null);
     setCreditsData(null);
+    setWaiverData(null);
     setDetailsLoading(true);
     setError(null);
 
@@ -1234,6 +1236,10 @@ function ClientsTab() {
       // Fetch credits ledger
       const creditsResp = await apiRequestJson(`/api/admin/credits/ledger?user_id=${client.user_id}`);
       setCreditsData(creditsResp);
+
+      // Fetch waiver signatures
+      const waiverResp = await apiRequestJson(`/api/admin/waiver?user_id=${client.user_id}`);
+      setWaiverData(waiverResp);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -1349,6 +1355,81 @@ function ClientsTab() {
                     </table>
                   ) : (
                     <p style={{ color: '#6c757d' }}>No credit history found for this client.</p>
+                  )}
+                </div>
+
+                {/* Waiver Signatures */}
+                <div style={{ marginBottom: '2rem', padding: '1rem', border: '1px solid #ddd', borderRadius: '4px', backgroundColor: '#f8f9fa' }}>
+                  <h4 style={{ marginBottom: '1rem' }}>Waiver Signatures</h4>
+                  {waiverData && waiverData.signatures && waiverData.signatures.length > 0 ? (
+                    <div>
+                      {waiverData.signatures.map(sig => (
+                        <div key={sig.id} style={{ marginBottom: '1.5rem', padding: '1rem', backgroundColor: 'white', border: '1px solid #ddd', borderRadius: '4px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem', paddingBottom: '0.5rem', borderBottom: '1px solid #eee' }}>
+                            <strong>{sig.waiver_title || 'Waiver'}</strong>
+                            <span style={{ fontSize: '0.875rem', color: '#6c757d' }}>
+                              Signed: {new Date(sig.signed_at).toLocaleString()}
+                            </span>
+                          </div>
+
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.875rem' }}>
+                            <div>
+                              <strong>Participant Name:</strong> {sig.participant_name || '-'}
+                            </div>
+                            <div>
+                              <strong>Date of Birth:</strong> {sig.participant_dob || '-'}
+                            </div>
+                            <div>
+                              <strong>Signature:</strong> <span style={{ fontFamily: 'cursive' }}>{sig.participant_signature || '-'}</span>
+                            </div>
+                            <div>
+                              <strong>Printed Name:</strong> {sig.participant_printed_name || '-'}
+                            </div>
+                            <div>
+                              <strong>Date Signed:</strong> {sig.participant_signed_date || '-'}
+                            </div>
+                            <div>
+                              <strong>Type:</strong> {sig.is_minor ? 'Minor Participant' : 'Adult Participant'}
+                            </div>
+                          </div>
+
+                          {sig.is_minor && (
+                            <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid #eee' }}>
+                              <h5 style={{ margin: '0 0 0.5rem 0', fontSize: '0.875rem', color: '#495057' }}>Minor Participant Addendum</h5>
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.875rem' }}>
+                                <div>
+                                  <strong>Minor's Name:</strong> {sig.minor_name || '-'}
+                                </div>
+                                <div>
+                                  <strong>Minor's DOB:</strong> {sig.minor_dob || '-'}
+                                </div>
+                                <div>
+                                  <strong>Guardian Name:</strong> {sig.guardian_name || '-'}
+                                </div>
+                                <div>
+                                  <strong>Relationship:</strong> {sig.guardian_relationship || '-'}
+                                </div>
+                                <div>
+                                  <strong>Guardian Signature:</strong> <span style={{ fontFamily: 'cursive' }}>{sig.guardian_signature || '-'}</span>
+                                </div>
+                                <div>
+                                  <strong>Guardian Printed Name:</strong> {sig.guardian_printed_name || '-'}
+                                </div>
+                                <div style={{ gridColumn: '1 / -1' }}>
+                                  <strong>Guardian Date Signed:</strong> {sig.guardian_signed_date || '-'}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid #eee', fontSize: '0.75rem', color: '#6c757d' }}>
+                            <strong>IP:</strong> {sig.ip_address || 'N/A'} | <strong>User Agent:</strong> {sig.user_agent || 'N/A'}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p style={{ color: '#6c757d' }}>No waiver signatures found for this client.</p>
                   )}
                 </div>
 

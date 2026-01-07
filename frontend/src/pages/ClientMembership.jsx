@@ -146,7 +146,7 @@ export function ClientMembership() {
                 marginBottom: 'var(--space-lg)'
               }}>
                 <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 700, marginBottom: 'var(--space-sm)' }}>
-                  ✨ Unlimited Circuit Training
+                  Unlimited Circuit Training
                 </h3>
                 <p style={{ color: 'var(--color-text-light)' }}>
                   Your membership includes unlimited access to all circuit training sessions.

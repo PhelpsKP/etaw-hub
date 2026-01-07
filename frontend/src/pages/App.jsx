@@ -125,7 +125,7 @@ export function App() {
               onMouseEnter={(e) => e.target.style.transform = 'scale(1.02)'}
               onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
             >
-              ⭐ Rewards
+              Rewards
             </button>
             <button
               onClick={() => navigate('/app/membership')}

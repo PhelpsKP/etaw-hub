@@ -180,7 +180,7 @@ export function Book() {
               }}>
                 <div>
                   <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-primary)' }}>
-                    {membershipData.hasUnlimited ? '✨ Unlimited Membership Active' : 'Membership Active'}
+                    {membershipData.hasUnlimited ? 'Unlimited Membership Active' : 'Membership Active'}
                   </h3>
                   <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.875rem', color: '#6b7280' }}>
                     {membershipData.membership.plan === 'circuit' ? 'Circuit Training' : membershipData.membership.plan}
