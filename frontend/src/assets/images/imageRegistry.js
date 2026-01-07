@@ -46,9 +46,11 @@ import peoplePetCommunity from './people/people-pet-gym-community-001.jpg';
 // ===========================
 // FACILITY IMAGES
 // ===========================
-import facilityBoxingRingHero from './facility/facility-boxing-hero-ring-training-001.png';
-import facilityStrengthCoaching from './facility/facility-strength-section-coaching-in-action-001.png';
-import facilityBoxingWallBags from './facility/facility-boxing-background-wall-bags-001.png';
+// NOTE: Facility PNG images are too large (>25MB) for Cloudflare Pages deployment
+// and are not currently used in marketing pages. Commented out to reduce bundle size.
+// import facilityBoxingRingHero from './facility/facility-boxing-hero-ring-training-001.png';
+// import facilityStrengthCoaching from './facility/facility-strength-section-coaching-in-action-001.png';
+// import facilityBoxingWallBags from './facility/facility-boxing-background-wall-bags-001.png';
 
 // ===========================
 // EXPORTS
@@ -92,8 +94,9 @@ export const people = {
   petCommunity: peoplePetCommunity,
 };
 
-export const facility = {
-  boxingRingHero: facilityBoxingRingHero,
-  strengthCoaching: facilityStrengthCoaching,
-  boxingWallBags: facilityBoxingWallBags,
-};
+// Facility images commented out due to file size limits
+// export const facility = {
+//   boxingRingHero: facilityBoxingRingHero,
+//   strengthCoaching: facilityStrengthCoaching,
+//   boxingWallBags: facilityBoxingWallBags,
+// };
