@@ -1247,6 +1247,32 @@ function ClientsTab() {
     }
   }
 
+  function handleDownloadIntake(submission, userId) {
+    const payload = {
+      user_id: userId,
+      form_type: submission.form_type,
+      submitted_at: submission.submitted_at,
+      data: submission.data
+    };
+
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    // Format date as YYYY-MM-DD
+    const date = new Date(submission.submitted_at);
+    const dateStr = date.toISOString().split('T')[0];
+
+    const filename = `intake_${userId}_${submission.form_type}_${dateStr}.json`;
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
   if (loading) return <div style={{ padding: '1rem' }}>Loading clients...</div>;
 
   return (
@@ -1302,23 +1328,50 @@ function ClientsTab() {
                   <h4 style={{ marginBottom: '1rem' }}>Intake Submissions</h4>
                   {intakeData && intakeData.submissions && intakeData.submissions.length > 0 ? (
                     <div>
-                      {intakeData.submissions.map(sub => (
-                        <div key={sub.id} style={{ marginBottom: '1rem', padding: '0.75rem', backgroundColor: 'white', border: '1px solid #ddd', borderRadius: '4px' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                            <strong>{sub.form_type}</strong>
-                            <span style={{ fontSize: '0.875rem', color: '#6c757d' }}>
-                              {new Date(sub.submitted_at).toLocaleDateString()}
-                            </span>
+                      {intakeData.submissions.map(sub => {
+                        const canDownload = !sub.parse_error && sub.data !== null;
+                        return (
+                          <div key={sub.id} style={{ marginBottom: '1rem', padding: '0.75rem', backgroundColor: 'white', border: '1px solid #ddd', borderRadius: '4px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                <strong>{sub.form_type}</strong>
+                                <span style={{ fontSize: '0.875rem', color: '#6c757d' }}>
+                                  {new Date(sub.submitted_at).toLocaleDateString()}
+                                </span>
+                              </div>
+                              <button
+                                onClick={() => handleDownloadIntake(sub, selectedClient.user_id)}
+                                disabled={!canDownload}
+                                className="btn btn-sm"
+                                style={{
+                                  backgroundColor: canDownload ? '#007bff' : '#e9ecef',
+                                  color: canDownload ? 'white' : '#6c757d',
+                                  cursor: canDownload ? 'pointer' : 'not-allowed',
+                                  border: 'none',
+                                  padding: '0.375rem 0.75rem',
+                                  fontSize: '0.875rem',
+                                  borderRadius: '4px'
+                                }}
+                              >
+                                Download JSON
+                              </button>
+                            </div>
+                            {sub.parse_error ? (
+                              <div style={{ color: '#dc3545', fontSize: '0.875rem' }}>
+                                Error parsing submission data - Cannot download, data parse error.
+                              </div>
+                            ) : sub.data === null ? (
+                              <div style={{ color: '#dc3545', fontSize: '0.875rem' }}>
+                                Cannot download, data is null.
+                              </div>
+                            ) : (
+                              <pre style={{ fontSize: '0.75rem', backgroundColor: '#f8f9fa', padding: '0.5rem', borderRadius: '4px', overflow: 'auto', maxHeight: '200px' }}>
+                                {JSON.stringify(sub.data, null, 2)}
+                              </pre>
+                            )}
                           </div>
-                          {sub.parse_error ? (
-                            <div style={{ color: '#dc3545', fontSize: '0.875rem' }}>Error parsing submission data</div>
-                          ) : (
-                            <pre style={{ fontSize: '0.75rem', backgroundColor: '#f8f9fa', padding: '0.5rem', borderRadius: '4px', overflow: 'auto', maxHeight: '200px' }}>
-                              {JSON.stringify(sub.data, null, 2)}
-                            </pre>
-                          )}
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   ) : (
                     <p style={{ color: '#6c757d' }}>No intake submissions found for this client.</p>
