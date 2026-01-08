@@ -1568,6 +1568,41 @@ function ClientsTab() {
     URL.revokeObjectURL(url);
   }
 
+  function handleDownloadWaiver(signature, userId) {
+    // Create readable text format
+    const content = `WAIVER SIGNATURE RECORD
+Elite Training & Wellness
+
+User ID: ${userId}
+Waiver Title: ${signature.waiver_title || 'Waiver'}
+Signed Date: ${new Date(signature.signed_at).toLocaleString()}
+Signed Name: ${signature.signed_name || 'N/A'}
+
+IP Address: ${signature.ip_address || 'N/A'}
+User Agent: ${signature.user_agent || 'N/A'}
+
+--- Waiver Content ---
+${signature.waiver_body || 'No waiver content available'}
+`;
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+
+    // Format date as YYYY-MM-DD
+    const date = new Date(signature.signed_at);
+    const dateStr = date.toISOString().split('T')[0];
+
+    const filename = `waiver_${userId}_${dateStr}.txt`;
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
   if (loading) return <div style={{ padding: '1rem' }}>Loading clients...</div>;
 
   return (
@@ -1729,73 +1764,49 @@ function ClientsTab() {
                   <h4 style={{ marginBottom: '1rem' }}>Waiver Signatures</h4>
                   {waiverData && waiverData.signatures && waiverData.signatures.length > 0 ? (
                     <div>
-                      {waiverData.signatures.map(sig => (
-                        <div key={sig.id} style={{ marginBottom: '1.5rem', padding: '1rem', backgroundColor: 'white', border: '1px solid #ddd', borderRadius: '4px' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem', paddingBottom: '0.5rem', borderBottom: '1px solid #eee' }}>
-                            <strong>{sig.waiver_title || 'Waiver'}</strong>
-                            <span style={{ fontSize: '0.875rem', color: '#6c757d' }}>
-                              Signed: {new Date(sig.signed_at).toLocaleString()}
-                            </span>
-                          </div>
-
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.875rem' }}>
+                      {waiverData.signatures.slice(0, 1).map(sig => (
+                        <div key={sig.id} style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: 'white', border: '1px solid #ddd', borderRadius: '4px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
                             <div>
-                              <strong>Participant Name:</strong> {sig.participant_name || '-'}
-                            </div>
-                            <div>
-                              <strong>Date of Birth:</strong> {sig.participant_dob || '-'}
-                            </div>
-                            <div>
-                              <strong>Signature:</strong> <span style={{ fontFamily: 'cursive' }}>{sig.participant_signature || '-'}</span>
-                            </div>
-                            <div>
-                              <strong>Printed Name:</strong> {sig.participant_printed_name || '-'}
-                            </div>
-                            <div>
-                              <strong>Date Signed:</strong> {sig.participant_signed_date || '-'}
-                            </div>
-                            <div>
-                              <strong>Type:</strong> {sig.is_minor ? 'Minor Participant' : 'Adult Participant'}
-                            </div>
-                          </div>
-
-                          {sig.is_minor && (
-                            <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid #eee' }}>
-                              <h5 style={{ margin: '0 0 0.5rem 0', fontSize: '0.875rem', color: '#495057' }}>Minor Participant Addendum</h5>
-                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.875rem' }}>
-                                <div>
-                                  <strong>Minor's Name:</strong> {sig.minor_name || '-'}
-                                </div>
-                                <div>
-                                  <strong>Minor's DOB:</strong> {sig.minor_dob || '-'}
-                                </div>
-                                <div>
-                                  <strong>Guardian Name:</strong> {sig.guardian_name || '-'}
-                                </div>
-                                <div>
-                                  <strong>Relationship:</strong> {sig.guardian_relationship || '-'}
-                                </div>
-                                <div>
-                                  <strong>Guardian Signature:</strong> <span style={{ fontFamily: 'cursive' }}>{sig.guardian_signature || '-'}</span>
-                                </div>
-                                <div>
-                                  <strong>Guardian Printed Name:</strong> {sig.guardian_printed_name || '-'}
-                                </div>
-                                <div style={{ gridColumn: '1 / -1' }}>
-                                  <strong>Guardian Date Signed:</strong> {sig.guardian_signed_date || '-'}
-                                </div>
+                              <strong>{sig.waiver_title || 'Waiver'}</strong>
+                              <div style={{ fontSize: '0.875rem', color: '#6c757d', marginTop: '0.25rem' }}>
+                                Signed: {new Date(sig.signed_at).toLocaleString()}
                               </div>
                             </div>
-                          )}
+                            <button
+                              onClick={() => handleDownloadWaiver(sig, selectedClient.user_id)}
+                              className="btn btn-sm"
+                              style={{
+                                backgroundColor: '#007bff',
+                                color: 'white',
+                                border: 'none',
+                                padding: '0.375rem 0.75rem',
+                                fontSize: '0.875rem',
+                                borderRadius: '4px',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              Download Waiver
+                            </button>
+                          </div>
 
-                          <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid #eee', fontSize: '0.75rem', color: '#6c757d' }}>
+                          <div style={{ fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+                            <strong>Signed Name:</strong> {sig.signed_name || 'N/A'}
+                          </div>
+
+                          <div style={{ fontSize: '0.75rem', color: '#6c757d', paddingTop: '0.5rem', borderTop: '1px solid #eee' }}>
                             <strong>IP:</strong> {sig.ip_address || 'N/A'} | <strong>User Agent:</strong> {sig.user_agent || 'N/A'}
                           </div>
                         </div>
                       ))}
+                      {waiverData.signatures.length > 1 && (
+                        <p style={{ fontSize: '0.75rem', color: '#6c757d', marginTop: '0.5rem' }}>
+                          Showing most recent signature. {waiverData.signatures.length - 1} older signature(s) on file.
+                        </p>
+                      )}
                     </div>
                   ) : (
-                    <p style={{ color: '#6c757d' }}>No waiver signatures found for this client.</p>
+                    <p style={{ color: '#6c757d' }}>No signed waiver on file.</p>
                   )}
                 </div>
 

@@ -1639,6 +1639,31 @@ export default {
         return withCors(json({ user_id: parseInt(userId), submissions: formatted }));
       }
 
+      // View user's waiver signatures
+      if (url.pathname === "/api/admin/waiver" && request.method === "GET") {
+        const admin = await requireAdmin(request, env);
+        if (!admin.ok) return withCors(admin.res);
+
+        const userId = url.searchParams.get("user_id");
+
+        if (!userId) {
+          return withCors(json({ error: "user_id parameter is required" }, 400));
+        }
+
+        const signatures = await env.DB.prepare(
+          `SELECT ws.id, ws.signed_at, ws.signed_name, ws.user_agent, ws.ip_address, ws.waiver_id,
+                  w.title as waiver_title, w.body as waiver_body
+           FROM waiver_signatures ws
+           LEFT JOIN waivers w ON ws.waiver_id = w.id
+           WHERE ws.user_id = ?
+           ORDER BY ws.signed_at DESC`
+        )
+          .bind(userId)
+          .all();
+
+        return withCors(json({ user_id: parseInt(userId), signatures: signatures.results || [] }));
+      }
+
       // ============ ADMIN: EXERCISES ============
       // List all exercises (with optional search)
       if (url.pathname === "/api/admin/exercises" && request.method === "GET") {
