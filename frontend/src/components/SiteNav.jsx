@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Container } from './Container';
+import logo from '../assets/images/branding/elite-logo-transparent-001.png';
 
 export function SiteNav() {
   const { user, logout } = useAuth();
@@ -45,7 +46,17 @@ export function SiteNav() {
             gap: 'var(--space-lg)',
             flexWrap: 'wrap'
           }}>
-            <Link to="/" style={{ fontWeight: 500 }} className="nav-link">Home</Link>
+            <Link to="/" style={{ display: 'inline-block' }}>
+              <img
+                src={logo}
+                alt="Elite Training & Wellness"
+                style={{
+                  maxHeight: '38px',
+                  display: 'block',
+                  cursor: 'pointer'
+                }}
+              />
+            </Link>
             <Link to="/services" style={{ fontWeight: 500 }} className="nav-link">Services</Link>
             <Link to="/about" style={{ fontWeight: 500 }} className="nav-link">Our Approach</Link>
             <Link to="/book" style={{ fontWeight: 500 }} className="nav-link">Book Online</Link>
