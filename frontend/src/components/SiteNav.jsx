@@ -47,7 +47,7 @@ export function SiteNav() {
           }}>
             <Link to="/" style={{ fontWeight: 500 }} className="nav-link">Home</Link>
             <Link to="/services" style={{ fontWeight: 500 }} className="nav-link">Services</Link>
-            <Link to="/about" style={{ fontWeight: 500 }} className="nav-link">About</Link>
+            <Link to="/about" style={{ fontWeight: 500 }} className="nav-link">Our Approach</Link>
             <Link to="/book" style={{ fontWeight: 500 }} className="nav-link">Book Online</Link>
 
             {user ? (

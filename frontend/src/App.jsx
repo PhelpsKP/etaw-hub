@@ -11,6 +11,8 @@ import { About } from './pages/About';
 import { BookOnline } from './pages/BookOnline';
 import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
+import { Terms } from './pages/Terms';
+import { Privacy } from './pages/Privacy';
 import { Admin } from './pages/Admin';
 import { Book } from './pages/Book';
 import { ClientWorkouts } from './pages/ClientWorkouts';
@@ -36,6 +38,8 @@ function App() {
             <Route path="/book" element={<BookOnline />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
           </Route>
 
           {/* App Routes (Protected) */}

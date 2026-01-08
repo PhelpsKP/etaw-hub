@@ -112,7 +112,7 @@ export function Home() {
                   lineHeight: 1.7,
                   color: '#fff'
                 }}>
-                  At Elite Training & Wellness, fitness is more than workouts — it's a lifestyle. We help you train smart, build lasting habits, and create positive change that strengthens your body and your life.
+                  At Elite Training & Wellness, we believe fitness is more than just workouts, it's a lifestyle. Here, you don't just train hard — you train smart, build lasting habits, and create positive change that strengthens your body and your life.
                 </p>
                 <div style={{
                   display: 'flex',
@@ -270,7 +270,7 @@ export function Home() {
                   color: 'var(--color-primary)',
                   marginBottom: 'var(--space-lg)'
                 }}>
-                  Meet Katie
+                  About Me
                 </h2>
                 <p style={{
                   fontSize: 'var(--font-size-base)',
@@ -291,10 +291,18 @@ export function Home() {
                 <p style={{
                   fontSize: 'var(--font-size-base)',
                   lineHeight: 1.8,
-                  color: 'var(--color-text)'
+                  color: 'var(--color-text)',
+                  marginBottom: 'var(--space-md)'
                 }}>
                   I have always been passionate about fitness, having played a wide variety of sports since childhood. I hold a current passbook with USA Boxing and often compete in tournaments and matches.
                 </p>
+                <Link to="/about#experience-certifications" style={{
+                  color: 'var(--color-primary)',
+                  fontWeight: 600,
+                  textDecoration: 'none'
+                }}>
+                  More →
+                </Link>
               </div>
             </div>
 

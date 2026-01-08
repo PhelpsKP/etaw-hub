@@ -103,7 +103,7 @@ export function About() {
               />
             </div>
             <div>
-              <h2 style={{
+              <h2 id="experience-certifications" style={{
                 fontSize: 'var(--font-size-2xl)',
                 fontWeight: 700,
                 color: 'var(--color-primary)',
