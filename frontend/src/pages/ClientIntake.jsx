@@ -212,6 +212,10 @@ export function ClientIntake() {
         })
       });
 
+      // Clear onboarding cache so OnboardingGate re-fetches fresh status
+      sessionStorage.removeItem('onboarding:status');
+      sessionStorage.removeItem('onboarding:token');
+
       setSuccessMessage('Intake form submitted successfully! Redirecting...');
       setTimeout(() => {
         navigate('/app/book', { replace: true });

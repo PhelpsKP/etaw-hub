@@ -119,11 +119,9 @@ function App() {
             <Route
               path="/app/admin"
               element={
-                <OnboardingGate>
-                  <ProtectedRoute requireAdmin={true}>
-                    <Admin />
-                  </ProtectedRoute>
-                </OnboardingGate>
+                <ProtectedRoute requireAdmin={true}>
+                  <Admin />
+                </ProtectedRoute>
               }
             />
           </Route>

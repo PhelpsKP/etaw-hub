@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { Navigate } from "react-router-dom";
 import { API_BASE_URL } from "../lib/api";
+import { useAuth } from "../contexts/AuthContext";
 
 const ONBOARDING_CACHE_KEY = 'onboarding:status';
 const ONBOARDING_CACHE_TOKEN_KEY = 'onboarding:token';
@@ -25,6 +26,7 @@ function getInitialOnboardingState() {
 }
 
 export function OnboardingGate({ children }) {
+  const { user } = useAuth();
   const initialState = getInitialOnboardingState();
   const [loading, setLoading] = useState(initialState.loading);
   const [waiverSigned, setWaiverSigned] = useState(initialState.waiverSigned);
@@ -182,7 +184,10 @@ export function OnboardingGate({ children }) {
   // Check waiver first
   if (!waiverSigned) return <Navigate to="/waiver" replace />;
 
-  // Then check intake
+  // Admins bypass intake requirement (safety check)
+  if (user?.role === 'admin') return children;
+
+  // Then check intake for non-admin users
   if (!intakeSubmitted) return <Navigate to="/app/intake" replace />;
 
   // Both complete - allow access

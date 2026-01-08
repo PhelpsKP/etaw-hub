@@ -50,18 +50,20 @@ export function RoleRedirect() {
           return;
         }
 
-        // 2. Intake second
+        // 2. Check role - admins skip intake requirement
+        if (user.role === 'admin') {
+          navigate('/app/admin', { replace: true });
+          return;
+        }
+
+        // 3. Clients require intake
         if (!intakeSubmitted) {
           navigate('/app/intake', { replace: true });
           return;
         }
 
-        // 3. Both complete - redirect based on role
-        if (user.role === 'admin') {
-          navigate('/app/admin', { replace: true });
-        } else {
-          navigate('/app/book', { replace: true });
-        }
+        // 4. Clients with intake complete go to booking
+        navigate('/app/book', { replace: true });
       } catch (err) {
         console.error('[RoleRedirect] Error checking onboarding:', err);
         // On error, send to waiver to be safe
