@@ -1353,7 +1353,7 @@ function ClientsTab() {
                                   borderRadius: '4px'
                                 }}
                               >
-                                Download JSON
+                                Download Intake Form
                               </button>
                             </div>
                             {sub.parse_error ? (
