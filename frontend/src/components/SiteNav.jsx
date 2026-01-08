@@ -26,18 +26,20 @@ export function SiteNav() {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          minHeight: '70px',
+          minHeight: '100px',
           gap: 'var(--space-md)',
           flexWrap: 'wrap'
         }}>
-          <Link to="/" style={{
-            fontSize: 'var(--font-size-xl)',
-            fontWeight: 700,
-            color: 'var(--color-primary)',
-            textDecoration: 'none',
-            whiteSpace: 'nowrap'
-          }}>
-            Elite Training & Wellness
+          <Link to="/" style={{ display: 'inline-block' }}>
+            <img
+              src={logo}
+              alt="Elite Training & Wellness"
+              style={{
+                maxHeight: '80px',
+                display: 'block',
+                cursor: 'pointer'
+              }}
+            />
           </Link>
 
           <div className="nav-links" style={{
@@ -46,17 +48,6 @@ export function SiteNav() {
             gap: 'var(--space-lg)',
             flexWrap: 'wrap'
           }}>
-            <Link to="/" style={{ display: 'inline-block' }}>
-              <img
-                src={logo}
-                alt="Elite Training & Wellness"
-                style={{
-                  maxHeight: '38px',
-                  display: 'block',
-                  cursor: 'pointer'
-                }}
-              />
-            </Link>
             <Link to="/services" style={{ fontWeight: 500 }} className="nav-link">Services</Link>
             <Link to="/about" style={{ fontWeight: 500 }} className="nav-link">Our Approach</Link>
             <Link to="/book" style={{ fontWeight: 500 }} className="nav-link">Book Online</Link>
