@@ -36,17 +36,17 @@ export async function apiRequest(path, options = {}) {
 export async function apiRequestJson(path, options = {}) {
   const response = await apiRequest(path, options);
   if (!response.ok) {
-    // Try to parse backend error JSON
+    // Read body once as text to avoid "body already consumed" error
+    const text = await response.text();
     try {
-      const errorData = await response.json();
+      const errorData = JSON.parse(text);
       if (errorData.error) {
         throw new Error(errorData.error);
       }
       throw new Error(JSON.stringify(errorData));
     } catch (e) {
-      // If not JSON, fall back to text
+      // If not valid JSON, use text directly
       if (e instanceof SyntaxError) {
-        const text = await response.text();
         throw new Error(`API Error ${response.status}: ${text}`);
       }
       throw e;

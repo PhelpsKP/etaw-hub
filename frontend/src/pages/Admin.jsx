@@ -1247,6 +1247,301 @@ function ClientsTab() {
     }
   }
 
+  function renderIntakeReadable(data) {
+    const formatValue = (val) => {
+      if (val === null || val === undefined || val === '') return '—';
+      if (typeof val === 'boolean') return val ? 'Yes' : 'No';
+      return val;
+    };
+
+    const renderSection = (title, fields) => (
+      <div key={title} style={{ marginBottom: '1.5rem' }}>
+        <h5 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#495057', marginBottom: '0.5rem', borderBottom: '1px solid #dee2e6', paddingBottom: '0.25rem' }}>
+          {title}
+        </h5>
+        <div style={{ fontSize: '0.75rem', lineHeight: 1.6 }}>
+          {fields.map(({ label, value }) => (
+            <div key={label} style={{ display: 'grid', gridTemplateColumns: '150px 1fr', gap: '0.5rem', marginBottom: '0.25rem' }}>
+              <strong>{label}:</strong>
+              <span>{formatValue(value)}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+
+    const sections = [];
+
+    if (data.personalInfo) {
+      const p = data.personalInfo;
+      sections.push(renderSection('Personal Information', [
+        { label: 'Name', value: p.name },
+        { label: 'Date of Birth', value: p.dateOfBirth },
+        { label: 'Height', value: p.height },
+        { label: 'Address', value: p.address },
+        { label: 'City', value: p.city },
+        { label: 'State', value: p.state },
+        { label: 'Zip', value: p.zip },
+        { label: 'Phone', value: p.phone },
+        { label: 'Email', value: p.email },
+        { label: 'Employer', value: p.employer },
+        { label: 'Occupation', value: p.occupation },
+        { label: 'Emergency Contact', value: p.emergencyContactName },
+        { label: 'Emergency Phone', value: p.emergencyContactPhone },
+        { label: 'Alt Contact', value: p.alternateContactName },
+        { label: 'Alt Phone', value: p.alternateContactPhone },
+        { label: 'Referral Source', value: p.referralSource }
+      ]));
+    }
+
+    if (data.lifestyle) {
+      const l = data.lifestyle;
+      sections.push(renderSection('Lifestyle', [
+        { label: 'Smoker', value: l.smoker },
+        { label: 'Cigarettes/Day', value: l.smokesPerDay },
+        { label: 'Former Smoker Quit', value: l.formerSmokerQuitDate },
+        { label: 'Drinks Alcohol', value: l.drinksAlcohol },
+        { label: 'Drinks/Week', value: l.alcoholPerWeek },
+        { label: 'Takes Supplements', value: l.takesSupplements },
+        { label: 'Supplements List', value: l.supplementsList },
+        { label: 'Sleep Hours/Night', value: l.sleepHours }
+      ]));
+    }
+
+    if (data.goals) {
+      const g = data.goals;
+      sections.push(renderSection('Goals & Program Info', [
+        { label: 'Health Goal A', value: g.healthGoalA },
+        { label: 'Health Goal B', value: g.healthGoalB },
+        { label: 'Health Goal C', value: g.healthGoalC },
+        { label: 'Goals Importance', value: g.goalsImportance },
+        { label: 'Trainer Importance', value: g.trainerImportance },
+        { label: 'Obstacle A', value: g.obstacleA },
+        { label: 'Obstacle B', value: g.obstacleB },
+        { label: 'Obstacle C', value: g.obstacleC }
+      ]));
+    }
+
+    if (data.nutrition) {
+      const n = data.nutrition;
+      sections.push(renderSection('Nutrition', [
+        { label: 'Rating (1-5)', value: n.rating },
+        { label: 'Meals Per Day', value: n.mealsPerDay },
+        { label: 'Skip Meals', value: n.skipMeals },
+        { label: 'Eating Activities', value: n.eatingActivities },
+        { label: 'Water Glasses/Day', value: n.waterGlasses },
+        { label: 'Regular Foods', value: n.regularFoods },
+        { label: 'Knows Calories', value: n.knowsCalories },
+        { label: 'Daily Calories', value: n.dailyCalories },
+        { label: 'Nutrition Goal A', value: n.nutritionGoalA },
+        { label: 'Nutrition Goal B', value: n.nutritionGoalB },
+        { label: 'Nutrition Goal C', value: n.nutritionGoalC },
+        { label: 'Additional Concerns', value: n.additionalConcerns }
+      ]));
+    }
+
+    if (data.parq) {
+      const p = data.parq;
+      sections.push(renderSection('PAR-Q Health Screening', [
+        { label: 'Q1: Heart condition', value: p.question1 },
+        { label: 'Q2: Chest pain', value: p.question2 },
+        { label: 'Q3: Chest pain (month)', value: p.question3 },
+        { label: 'Q4: Balance/dizziness', value: p.question4 },
+        { label: 'Q5: Bone/joint problem', value: p.question5 },
+        { label: 'Q6: Blood pressure meds', value: p.question6 },
+        { label: 'Q7: Other reason', value: p.question7 },
+        { label: 'Any Yes Answers', value: p.hasYes },
+        { label: 'Details', value: p.details }
+      ]));
+    }
+
+    if (data.certification) {
+      const c = data.certification;
+      sections.push(renderSection('Certification & Signature', [
+        { label: 'Agreed', value: c.agreed },
+        { label: 'Signature', value: c.signature },
+        { label: 'Date Signed', value: c.date }
+      ]));
+    }
+
+    return <div style={{ fontSize: '0.875rem' }}>{sections}</div>;
+  }
+
+  function handlePrintIntake(submission, client) {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('Please allow popups to print the intake form.');
+      return;
+    }
+
+    const formattedDate = new Date(submission.submitted_at).toLocaleString();
+
+    const renderSectionForPrint = (title, fields) => {
+      const rows = fields.map(({ label, value }) => {
+        const displayValue = value === null || value === undefined || value === '' ? '—' :
+                            typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value;
+        return `
+          <tr>
+            <td style="padding: 4px 8px; border: 1px solid #ddd; font-weight: 600;">${label}:</td>
+            <td style="padding: 4px 8px; border: 1px solid #ddd;">${displayValue}</td>
+          </tr>
+        `;
+      }).join('');
+
+      return `
+        <div style="margin-bottom: 20px;">
+          <h3 style="font-size: 14px; font-weight: 600; color: #333; margin-bottom: 8px; border-bottom: 2px solid #333; padding-bottom: 4px;">
+            ${title}
+          </h3>
+          <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+            ${rows}
+          </table>
+        </div>
+      `;
+    };
+
+    let sectionsHtml = '';
+    const data = submission.data;
+
+    if (data.personalInfo) {
+      const p = data.personalInfo;
+      sectionsHtml += renderSectionForPrint('Personal Information', [
+        { label: 'Name', value: p.name },
+        { label: 'Date of Birth', value: p.dateOfBirth },
+        { label: 'Height', value: p.height },
+        { label: 'Address', value: p.address },
+        { label: 'City', value: p.city },
+        { label: 'State', value: p.state },
+        { label: 'Zip', value: p.zip },
+        { label: 'Phone', value: p.phone },
+        { label: 'Email', value: p.email },
+        { label: 'Employer', value: p.employer },
+        { label: 'Occupation', value: p.occupation },
+        { label: 'Emergency Contact', value: p.emergencyContactName },
+        { label: 'Emergency Phone', value: p.emergencyContactPhone },
+        { label: 'Alt Contact', value: p.alternateContactName },
+        { label: 'Alt Phone', value: p.alternateContactPhone },
+        { label: 'Referral Source', value: p.referralSource }
+      ]);
+    }
+
+    if (data.lifestyle) {
+      const l = data.lifestyle;
+      sectionsHtml += renderSectionForPrint('Lifestyle', [
+        { label: 'Smoker', value: l.smoker },
+        { label: 'Cigarettes/Day', value: l.smokesPerDay },
+        { label: 'Former Smoker Quit', value: l.formerSmokerQuitDate },
+        { label: 'Drinks Alcohol', value: l.drinksAlcohol },
+        { label: 'Drinks/Week', value: l.alcoholPerWeek },
+        { label: 'Takes Supplements', value: l.takesSupplements },
+        { label: 'Supplements List', value: l.supplementsList },
+        { label: 'Sleep Hours/Night', value: l.sleepHours }
+      ]);
+    }
+
+    if (data.goals) {
+      const g = data.goals;
+      sectionsHtml += renderSectionForPrint('Goals & Program Info', [
+        { label: 'Health Goal A', value: g.healthGoalA },
+        { label: 'Health Goal B', value: g.healthGoalB },
+        { label: 'Health Goal C', value: g.healthGoalC },
+        { label: 'Goals Importance', value: g.goalsImportance },
+        { label: 'Trainer Importance', value: g.trainerImportance },
+        { label: 'Obstacle A', value: g.obstacleA },
+        { label: 'Obstacle B', value: g.obstacleB },
+        { label: 'Obstacle C', value: g.obstacleC }
+      ]);
+    }
+
+    if (data.nutrition) {
+      const n = data.nutrition;
+      sectionsHtml += renderSectionForPrint('Nutrition', [
+        { label: 'Rating (1-5)', value: n.rating },
+        { label: 'Meals Per Day', value: n.mealsPerDay },
+        { label: 'Skip Meals', value: n.skipMeals },
+        { label: 'Eating Activities', value: n.eatingActivities },
+        { label: 'Water Glasses/Day', value: n.waterGlasses },
+        { label: 'Regular Foods', value: n.regularFoods },
+        { label: 'Knows Calories', value: n.knowsCalories },
+        { label: 'Daily Calories', value: n.dailyCalories },
+        { label: 'Nutrition Goal A', value: n.nutritionGoalA },
+        { label: 'Nutrition Goal B', value: n.nutritionGoalB },
+        { label: 'Nutrition Goal C', value: n.nutritionGoalC },
+        { label: 'Additional Concerns', value: n.additionalConcerns }
+      ]);
+    }
+
+    if (data.parq) {
+      const p = data.parq;
+      sectionsHtml += renderSectionForPrint('PAR-Q Health Screening', [
+        { label: 'Q1: Heart condition', value: p.question1 },
+        { label: 'Q2: Chest pain', value: p.question2 },
+        { label: 'Q3: Chest pain (month)', value: p.question3 },
+        { label: 'Q4: Balance/dizziness', value: p.question4 },
+        { label: 'Q5: Bone/joint problem', value: p.question5 },
+        { label: 'Q6: Blood pressure meds', value: p.question6 },
+        { label: 'Q7: Other reason', value: p.question7 },
+        { label: 'Any Yes Answers', value: p.hasYes },
+        { label: 'Details', value: p.details }
+      ]);
+    }
+
+    if (data.certification) {
+      const c = data.certification;
+      sectionsHtml += renderSectionForPrint('Certification & Signature', [
+        { label: 'Agreed', value: c.agreed },
+        { label: 'Signature', value: c.signature },
+        { label: 'Date Signed', value: c.date }
+      ]);
+    }
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Client Intake Form - ${client.email}</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: white;
+          }
+          h1 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #000;
+          }
+          .meta {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #000;
+          }
+          @media print {
+            body { margin: 0; }
+          }
+        </style>
+      </head>
+      <body>
+        <h1>Client Intake Form</h1>
+        <div class="meta">
+          <div><strong>Client:</strong> ${client.email}</div>
+          <div><strong>User ID:</strong> ${client.user_id}</div>
+          <div><strong>Form Type:</strong> ${submission.form_type}</div>
+          <div><strong>Submitted:</strong> ${formattedDate}</div>
+        </div>
+        ${sectionsHtml}
+      </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+    setTimeout(() => {
+      printWindow.print();
+    }, 250);
+  }
+
   function handleDownloadIntake(submission, userId) {
     const payload = {
       user_id: userId,
@@ -1339,35 +1634,53 @@ function ClientsTab() {
                                   {new Date(sub.submitted_at).toLocaleDateString()}
                                 </span>
                               </div>
-                              <button
-                                onClick={() => handleDownloadIntake(sub, selectedClient.user_id)}
-                                disabled={!canDownload}
-                                className="btn btn-sm"
-                                style={{
-                                  backgroundColor: canDownload ? '#007bff' : '#e9ecef',
-                                  color: canDownload ? 'white' : '#6c757d',
-                                  cursor: canDownload ? 'pointer' : 'not-allowed',
-                                  border: 'none',
-                                  padding: '0.375rem 0.75rem',
-                                  fontSize: '0.875rem',
-                                  borderRadius: '4px'
-                                }}
-                              >
-                                Download Intake Form
-                              </button>
+                              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <button
+                                  onClick={() => handlePrintIntake(sub, selectedClient)}
+                                  disabled={!canDownload}
+                                  className="btn btn-sm"
+                                  style={{
+                                    backgroundColor: canDownload ? '#28a745' : '#e9ecef',
+                                    color: canDownload ? 'white' : '#6c757d',
+                                    cursor: canDownload ? 'pointer' : 'not-allowed',
+                                    border: 'none',
+                                    padding: '0.375rem 0.75rem',
+                                    fontSize: '0.875rem',
+                                    borderRadius: '4px'
+                                  }}
+                                >
+                                  Print / Save PDF
+                                </button>
+                                <button
+                                  onClick={() => handleDownloadIntake(sub, selectedClient.user_id)}
+                                  disabled={!canDownload}
+                                  className="btn btn-sm"
+                                  style={{
+                                    backgroundColor: canDownload ? '#6c757d' : '#e9ecef',
+                                    color: canDownload ? 'white' : '#6c757d',
+                                    cursor: canDownload ? 'pointer' : 'not-allowed',
+                                    border: 'none',
+                                    padding: '0.375rem 0.75rem',
+                                    fontSize: '0.875rem',
+                                    borderRadius: '4px'
+                                  }}
+                                >
+                                  Download JSON
+                                </button>
+                              </div>
                             </div>
                             {sub.parse_error ? (
                               <div style={{ color: '#dc3545', fontSize: '0.875rem' }}>
-                                Error parsing submission data - Cannot download, data parse error.
+                                Error parsing submission data - Cannot display or download.
                               </div>
                             ) : sub.data === null ? (
                               <div style={{ color: '#dc3545', fontSize: '0.875rem' }}>
-                                Cannot download, data is null.
+                                Cannot display - data is null.
                               </div>
                             ) : (
-                              <pre style={{ fontSize: '0.75rem', backgroundColor: '#f8f9fa', padding: '0.5rem', borderRadius: '4px', overflow: 'auto', maxHeight: '200px' }}>
-                                {JSON.stringify(sub.data, null, 2)}
-                              </pre>
+                              <div style={{ backgroundColor: '#f8f9fa', padding: '0.75rem', borderRadius: '4px', maxHeight: '400px', overflow: 'auto' }}>
+                                {renderIntakeReadable(sub.data)}
+                              </div>
                             )}
                           </div>
                         );
