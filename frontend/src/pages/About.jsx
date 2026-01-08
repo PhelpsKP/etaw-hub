@@ -38,14 +38,6 @@ export function About() {
               color: 'var(--color-text)',
               marginBottom: 'var(--space-lg)'
             }}>
-              At Elite Training & Wellness, we believe fitness is more than just workouts, it's a lifestyle. Here, you don't just train hard — you train smart, build lasting habits, and create positive change that strengthens your body and your life.
-            </p>
-            <p style={{
-              fontSize: 'var(--font-size-lg)',
-              lineHeight: 1.8,
-              color: 'var(--color-text)',
-              marginBottom: 'var(--space-lg)'
-            }}>
               We chose the name Elite because we stand apart not just in instruction, but in intentional guidance. We don't simply show you how to move; we help you understand why you're doing it — from safe, effective form to goal-focused strength and conditioning — because the best results come from training with purpose.
             </p>
             <p style={{
@@ -54,15 +46,7 @@ export function About() {
               color: 'var(--color-text)',
               marginBottom: 'var(--space-lg)'
             }}>
-              We also know that true transformation goes beyond physical performance and physique. That's why wellness is in our name, and guides everything we do. We combine proper training with habits that support long-term health, balanced living, and a mindset that keeps you dedicated for years to come.
-            </p>
-            <p style={{
-              fontSize: 'var(--font-size-lg)',
-              lineHeight: 1.8,
-              color: 'var(--color-text)',
-              marginBottom: 'var(--space-lg)'
-            }}>
-              Whether your goal is more strength, confidence, energy, or something else entirely, we'll work together to build habits that last a lifetime.
+              We also know that true transformation goes beyond physical performance and physique. That's why wellness is in our name, and guides everything we do. We combine proper training with habits that support long-term health, balanced living, and a mindset that keeps you dedicated for years to come. Whether your goal is more strength, confidence, energy, or something else entirely, we'll work together to build habits that last a lifetime.
             </p>
             <p style={{
               fontSize: 'var(--font-size-lg)',

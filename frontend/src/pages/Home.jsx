@@ -301,7 +301,7 @@ export function Home() {
                   fontWeight: 600,
                   textDecoration: 'none'
                 }}>
-                  More →
+                  More
                 </Link>
               </div>
             </div>
