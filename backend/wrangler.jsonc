@@ -28,7 +28,8 @@
   "vars": {
     "EMAIL_FROM": "noreply@etaw.com",
     "EMAIL_FROM_NAME": "Elite Training and Wellness",
-    "REMINDERS_DRY_RUN": "true"
+    "REMINDERS_DRY_RUN": "true",
+    "PHASE2_ENABLED": "false"
     // "ALLOWED_ORIGINS": "https://your-app.pages.dev,https://custom-domain.com"
   },
 

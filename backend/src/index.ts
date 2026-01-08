@@ -2,6 +2,7 @@ import { SignJWT, jwtVerify } from "jose";
 import { sha256 } from "@noble/hashes/sha2.js";
 import { bytesToHex } from "@noble/hashes/utils.js";
 import bcrypt from "bcryptjs";
+import * as phase2 from './phase2-repositories';
 
 interface Env {
   DB: D1Database;
@@ -11,6 +12,7 @@ interface Env {
   EMAIL_FROM_NAME?: string;
   MAILCHANNELS_API_KEY?: string;
   REMINDERS_DRY_RUN?: string;
+  PHASE2_ENABLED?: string;
 }
 
 const encoder = new TextEncoder();
@@ -132,6 +134,11 @@ async function requireAdmin(request: Request, env: Env) {
   }
 
   return auth;
+}
+
+// Helper: check if Phase 2 features are enabled
+function isPhase2Enabled(env: Env): boolean {
+  return env.PHASE2_ENABLED === "true";
 }
 
 // Helper: get credit balance for a user and credit type
@@ -2387,6 +2394,333 @@ export default {
         }
 
         return withCors(json({ ok: true, message: "Test email sent successfully" }));
+      }
+
+      // ============ PHASE 2: GROUPS (ADMIN) ============
+      // Create group
+      if (url.pathname === "/api/v2/admin/groups" && request.method === "POST") {
+        if (!isPhase2Enabled(env)) return withCors(new Response("Not Found", { status: 404 }));
+        const admin = await requireAdmin(request, env);
+        if (!admin.ok) return withCors(admin.res);
+
+        const { name, description } = await request.json() as { name: string; description?: string };
+        if (!name) return withCors(json({ error: "name is required" }, 400));
+
+        const id = crypto.randomUUID();
+        const group = await phase2.createGroup(env.DB, id, name, description || null);
+        return withCors(json({ ok: true, group }));
+      }
+
+      // List groups
+      if (url.pathname === "/api/v2/admin/groups" && request.method === "GET") {
+        if (!isPhase2Enabled(env)) return withCors(new Response("Not Found", { status: 404 }));
+        const admin = await requireAdmin(request, env);
+        if (!admin.ok) return withCors(admin.res);
+
+        const activeOnly = url.searchParams.get("active") !== "false";
+        const groups = await phase2.listGroups(env.DB, activeOnly);
+        return withCors(json({ groups }));
+      }
+
+      // Get group
+      if (url.pathname.startsWith("/api/v2/admin/groups/") && request.method === "GET") {
+        if (!isPhase2Enabled(env)) return withCors(new Response("Not Found", { status: 404 }));
+        const admin = await requireAdmin(request, env);
+        if (!admin.ok) return withCors(admin.res);
+
+        const id = url.pathname.substring("/api/v2/admin/groups/".length);
+        const group = await phase2.getGroup(env.DB, id);
+        if (!group) return withCors(json({ error: "Group not found" }, 404));
+        return withCors(json({ group }));
+      }
+
+      // Update group
+      if (url.pathname.startsWith("/api/v2/admin/groups/") && request.method === "PATCH") {
+        if (!isPhase2Enabled(env)) return withCors(new Response("Not Found", { status: 404 }));
+        const admin = await requireAdmin(request, env);
+        if (!admin.ok) return withCors(admin.res);
+
+        const id = url.pathname.substring("/api/v2/admin/groups/".length);
+        const updates = await request.json() as { name?: string; description?: string; is_active?: number };
+        await phase2.updateGroup(env.DB, id, updates);
+        return withCors(json({ ok: true }));
+      }
+
+      // ============ PHASE 2: GROUP MEMBERSHIPS (ADMIN) ============
+      // Add member to group
+      if (url.pathname === "/api/v2/admin/group-memberships" && request.method === "POST") {
+        if (!isPhase2Enabled(env)) return withCors(new Response("Not Found", { status: 404 }));
+        const admin = await requireAdmin(request, env);
+        if (!admin.ok) return withCors(admin.res);
+
+        const { group_id, client_id, start_date, end_date } = await request.json() as {
+          group_id: string;
+          client_id: number;
+          start_date: string;
+          end_date?: string
+        };
+        if (!group_id || !client_id || !start_date) {
+          return withCors(json({ error: "group_id, client_id, and start_date are required" }, 400));
+        }
+
+        try {
+          const id = crypto.randomUUID();
+          const membership = await phase2.addGroupMembership(
+            env.DB,
+            id,
+            group_id,
+            client_id,
+            start_date,
+            end_date || null,
+            admin.uid
+          );
+          return withCors(json({ ok: true, membership }));
+        } catch (err: any) {
+          return withCors(json({ error: err.message }, 400));
+        }
+      }
+
+      // List group members
+      if (url.pathname.startsWith("/api/v2/admin/groups/") && url.pathname.endsWith("/members") && request.method === "GET") {
+        if (!isPhase2Enabled(env)) return withCors(new Response("Not Found", { status: 404 }));
+        const admin = await requireAdmin(request, env);
+        if (!admin.ok) return withCors(admin.res);
+
+        const groupId = url.pathname.substring("/api/v2/admin/groups/".length, url.pathname.length - "/members".length);
+        const activeOnly = url.searchParams.get("active") !== "false";
+        const members = await phase2.listGroupMembers(env.DB, groupId, activeOnly);
+        return withCors(json({ members }));
+      }
+
+      // Remove member from group (set end_date)
+      if (url.pathname.startsWith("/api/v2/admin/group-memberships/") && request.method === "DELETE") {
+        if (!isPhase2Enabled(env)) return withCors(new Response("Not Found", { status: 404 }));
+        const admin = await requireAdmin(request, env);
+        if (!admin.ok) return withCors(admin.res);
+
+        const membershipId = url.pathname.substring("/api/v2/admin/group-memberships/".length);
+        const endDate = new Date().toISOString();
+        await phase2.removeGroupMembership(env.DB, membershipId, endDate);
+        return withCors(json({ ok: true }));
+      }
+
+      // ============ PHASE 2: WORKOUT ASSIGNMENTS (ADMIN) ============
+      // Create workout assignment
+      if (url.pathname === "/api/v2/admin/workout-assignments" && request.method === "POST") {
+        if (!isPhase2Enabled(env)) return withCors(new Response("Not Found", { status: 404 }));
+        const admin = await requireAdmin(request, env);
+        if (!admin.ok) return withCors(admin.res);
+
+        const { workout_id, assignee_type, assignee_id, start_date, end_date } = await request.json() as {
+          workout_id: string;
+          assignee_type: string;
+          assignee_id: string;
+          start_date: string;
+          end_date?: string;
+        };
+        if (!workout_id || !assignee_type || !assignee_id || !start_date) {
+          return withCors(json({ error: "workout_id, assignee_type, assignee_id, and start_date are required" }, 400));
+        }
+        if (assignee_type !== "group" && assignee_type !== "client") {
+          return withCors(json({ error: "assignee_type must be 'group' or 'client'" }, 400));
+        }
+
+        const id = crypto.randomUUID();
+        const assignment = await phase2.createWorkoutAssignment(
+          env.DB,
+          id,
+          workout_id,
+          assignee_type,
+          assignee_id,
+          start_date,
+          end_date || null,
+          admin.uid
+        );
+        return withCors(json({ ok: true, assignment }));
+      }
+
+      // List workout assignments
+      if (url.pathname === "/api/v2/admin/workout-assignments" && request.method === "GET") {
+        if (!isPhase2Enabled(env)) return withCors(new Response("Not Found", { status: 404 }));
+        const admin = await requireAdmin(request, env);
+        if (!admin.ok) return withCors(admin.res);
+
+        const filters = {
+          workoutId: url.searchParams.get("workout_id") || undefined,
+          assigneeType: (url.searchParams.get("assignee_type") as 'group' | 'client') || undefined,
+          assigneeId: url.searchParams.get("assignee_id") || undefined,
+          activeOnly: url.searchParams.get("active") !== "false",
+        };
+
+        const assignments = await phase2.listWorkoutAssignments(env.DB, filters);
+        return withCors(json({ assignments }));
+      }
+
+      // ============ PHASE 2: WORKOUT SESSIONS (CLIENT) ============
+      // Start workout session
+      if (url.pathname === "/api/v2/workout-sessions" && request.method === "POST") {
+        if (!isPhase2Enabled(env)) return withCors(new Response("Not Found", { status: 404 }));
+        const auth = await requireAuth(request, env);
+        if (!auth.ok) return withCors(auth.res);
+
+        const { workout_id, assignment_id, performed_at, notes } = await request.json() as {
+          workout_id: string;
+          assignment_id?: string;
+          performed_at: string;
+          notes?: string;
+        };
+        if (!workout_id || !performed_at) {
+          return withCors(json({ error: "workout_id and performed_at are required" }, 400));
+        }
+
+        const id = crypto.randomUUID();
+        const session = await phase2.createWorkoutSession(
+          env.DB,
+          id,
+          auth.uid,
+          workout_id,
+          assignment_id || null,
+          performed_at,
+          notes || null
+        );
+        return withCors(json({ ok: true, session }));
+      }
+
+      // Get workout session
+      if (url.pathname.startsWith("/api/v2/workout-sessions/") && request.method === "GET") {
+        if (!isPhase2Enabled(env)) return withCors(new Response("Not Found", { status: 404 }));
+        const auth = await requireAuth(request, env);
+        if (!auth.ok) return withCors(auth.res);
+
+        const sessionId = url.pathname.substring("/api/v2/workout-sessions/".length);
+        const session = await phase2.getWorkoutSession(env.DB, sessionId);
+        if (!session) return withCors(json({ error: "Session not found" }, 404));
+
+        // Verify ownership (clients can only see their own sessions, admins can see all)
+        const user = await env.DB.prepare("SELECT role FROM users WHERE id = ?").bind(auth.uid).first();
+        if (user?.role !== "admin" && session.client_id !== auth.uid) {
+          return withCors(json({ error: "Forbidden" }, 403));
+        }
+
+        return withCors(json({ session }));
+      }
+
+      // List my workout sessions
+      if (url.pathname === "/api/v2/my-workout-sessions" && request.method === "GET") {
+        if (!isPhase2Enabled(env)) return withCors(new Response("Not Found", { status: 404 }));
+        const auth = await requireAuth(request, env);
+        if (!auth.ok) return withCors(auth.res);
+
+        const limit = parseInt(url.searchParams.get("limit") || "50");
+        const sessions = await phase2.listClientWorkoutSessions(env.DB, auth.uid, limit);
+        return withCors(json({ sessions }));
+      }
+
+      // ============ PHASE 2: WORKOUT SET LOGS (CLIENT) ============
+      // Log a set
+      if (url.pathname === "/api/v2/workout-set-logs" && request.method === "POST") {
+        if (!isPhase2Enabled(env)) return withCors(new Response("Not Found", { status: 404 }));
+        const auth = await requireAuth(request, env);
+        if (!auth.ok) return withCors(auth.res);
+
+        const { workout_session_id, exercise_id, set_index, reps, weight, rest_seconds, notes } = await request.json() as {
+          workout_session_id: string;
+          exercise_id: string;
+          set_index: number;
+          reps?: number;
+          weight?: number;
+          rest_seconds?: number;
+          notes?: string;
+        };
+        if (!workout_session_id || !exercise_id || set_index === undefined) {
+          return withCors(json({ error: "workout_session_id, exercise_id, and set_index are required" }, 400));
+        }
+
+        // Verify session ownership
+        const session = await phase2.getWorkoutSession(env.DB, workout_session_id);
+        if (!session) return withCors(json({ error: "Session not found" }, 404));
+        if (session.client_id !== auth.uid) {
+          return withCors(json({ error: "Forbidden" }, 403));
+        }
+
+        const id = crypto.randomUUID();
+        const setLog = await phase2.createWorkoutSetLog(
+          env.DB,
+          id,
+          workout_session_id,
+          exercise_id,
+          set_index,
+          reps || null,
+          weight || null,
+          rest_seconds || null,
+          notes || null
+        );
+        return withCors(json({ ok: true, set_log: setLog }));
+      }
+
+      // Get set logs for a session
+      if (url.pathname.startsWith("/api/v2/workout-sessions/") && url.pathname.endsWith("/set-logs") && request.method === "GET") {
+        if (!isPhase2Enabled(env)) return withCors(new Response("Not Found", { status: 404 }));
+        const auth = await requireAuth(request, env);
+        if (!auth.ok) return withCors(auth.res);
+
+        const sessionId = url.pathname.substring("/api/v2/workout-sessions/".length, url.pathname.length - "/set-logs".length);
+
+        // Verify session ownership
+        const session = await phase2.getWorkoutSession(env.DB, sessionId);
+        if (!session) return withCors(json({ error: "Session not found" }, 404));
+
+        const user = await env.DB.prepare("SELECT role FROM users WHERE id = ?").bind(auth.uid).first();
+        if (user?.role !== "admin" && session.client_id !== auth.uid) {
+          return withCors(json({ error: "Forbidden" }, 403));
+        }
+
+        const setLogs = await phase2.listWorkoutSetLogs(env.DB, sessionId);
+        return withCors(json({ set_logs: setLogs }));
+      }
+
+      // ============ PHASE 2: CREDIT PURCHASES ============
+      // Create credit purchase (idempotent)
+      if (url.pathname === "/api/v2/credit-purchases" && request.method === "POST") {
+        if (!isPhase2Enabled(env)) return withCors(new Response("Not Found", { status: 404 }));
+        const auth = await requireAuth(request, env);
+        if (!auth.ok) return withCors(auth.res);
+
+        const { provider, provider_txn_id, dollars_amount, credits_amount, status, purchased_at } = await request.json() as {
+          provider: string;
+          provider_txn_id: string;
+          dollars_amount: number;
+          credits_amount: number;
+          status: 'pending' | 'completed' | 'failed' | 'refunded';
+          purchased_at: string;
+        };
+        if (!provider || !provider_txn_id || !dollars_amount || !credits_amount || !status || !purchased_at) {
+          return withCors(json({ error: "provider, provider_txn_id, dollars_amount, credits_amount, status, and purchased_at are required" }, 400));
+        }
+
+        const id = crypto.randomUUID();
+        const purchase = await phase2.createCreditPurchase(
+          env.DB,
+          id,
+          auth.uid,
+          provider,
+          provider_txn_id,
+          dollars_amount,
+          credits_amount,
+          status,
+          purchased_at
+        );
+        return withCors(json({ ok: true, purchase, is_duplicate: purchase.id !== id }));
+      }
+
+      // List my credit purchases
+      if (url.pathname === "/api/v2/my-credit-purchases" && request.method === "GET") {
+        if (!isPhase2Enabled(env)) return withCors(new Response("Not Found", { status: 404 }));
+        const auth = await requireAuth(request, env);
+        if (!auth.ok) return withCors(auth.res);
+
+        const purchases = await phase2.listClientCreditPurchases(env.DB, auth.uid);
+        return withCors(json({ purchases }));
       }
 
       // ---------------- FALLBACK ----------------
